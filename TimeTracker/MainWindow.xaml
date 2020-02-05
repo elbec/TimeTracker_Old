@@ -1,0 +1,50 @@
+﻿<Window x:Class="TimeTracker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TimeTracker"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525" WindowStyle="None">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="500"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Rectangle Grid.Row="0" Grid.Column="0" Fill="#003241" Grid.ColumnSpan="2" MouseLeftButtonDown="Window_MouseDown"></Rectangle>
+
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <Image Grid.Row="0" Grid.Column="0" Source="{DynamicResource menu}" Margin="10" Height="15" Width="15" MouseLeftButtonDown="Image_MouseLeftButtonDown"></Image>
+            <Label Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="25" FontFamily="Arial">Timesheet</Label>
+            <Image Name="StartStopTimer" Grid.Row="0" Grid.Column="2" Source="Assets/play-circle-regular.png" Margin="10" Height="40" Width="40" MouseLeftButtonDown="Image_MouseLeftButtonDown_1"></Image>
+            <Image Name="Add" Grid.Row="0" Grid.Column="3" Source="{DynamicResource plus}" Margin="10" Height="20" Width="20" MouseLeftButtonDown="addNewProject_MouseLeftButtonDown" MouseEnter="OpenPopupButton_MouseEnter" MouseLeave="OpenPopupButton_MouseLeave"></Image>
+            <Image Name="Close" Grid.Row="0" Grid.Column="4" Source="{DynamicResource close}" Margin="10" Height="15" Width="15" MouseLeftButtonDown="Close_MouseLeftButtonDown"></Image>
+        </Grid>
+
+
+
+        <Grid Name="DataGrid" Grid.Row="1" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="437*"/>
+            </Grid.ColumnDefinitions>
+
+        </Grid>
+
+    </Grid>
+
+
+</Window>
+
+    
