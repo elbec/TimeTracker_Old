@@ -356,19 +356,43 @@ namespace TimeTracker
                 image.Source = new BitmapImage(new Uri("Assets/stop-circle-regular.png", UriKind.Relative));
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
-              //  _allHeadData[0].timerData.isTimerRunning = true;
-               // find.timerData.isTimerRunning = true;
-                //findData.timerData.StartTime = DateTime.Now;
-                //findData.timerData.isTimerRunning = true;
 
+                timerData newTimerData = new timerData();
+                newTimerData.StartTime = DateTime.Now;
+                newTimerData.isTimerRunning = true;
 
+                headData newData = new headData()
+                {
+                    id = findData.id,
+                    title = findData.title,
+                    subtitle = findData.subtitle,
+                    createDate = findData.createDate,
+                    timerData = newTimerData
+                };
+
+                _allHeadData[index] = newData;
             }
             else
             {
                 image.Source = new BitmapImage(new Uri("Assets/play-circle-regular.png", UriKind.Relative));
                 var myId = stack.Name.Split('_');
-                findData.timerData.EndTime = DateTime.Now;
-                findData.timerData.isTimerRunning = true;
+                int index = int.Parse(getId[1]);
+
+                timerData oldTimerData = findData.timerData;
+                oldTimerData.EndTime = DateTime.Now;
+                oldTimerData.isTimerRunning = false;
+
+                headData newData = new headData()
+                {
+                    id = findData.id,
+                    title = findData.title,
+                    subtitle = findData.subtitle,
+                    createDate = findData.createDate,
+                    timerData = oldTimerData
+                };
+
+                _allHeadData[index] = newData;
+                writeToJson();
             }
             updateView();
         }
@@ -446,7 +470,6 @@ namespace TimeTracker
 
         private void showPopUp()
         {
-
             Border border = new Border();
             border.BorderBrush = blueColor;
             border.BorderThickness = new Thickness(2);
@@ -513,6 +536,11 @@ namespace TimeTracker
         public void saveToJson()
         {
             _allHeadData.Add(myHeaderData);
+            writeToJson();
+        }
+
+        public void writeToJson()
+        {
             using (StreamWriter file = File.CreateText(@"C:\Temp\output.txt"))
             {
                 JsonSerializer serializer = new JsonSerializer();
