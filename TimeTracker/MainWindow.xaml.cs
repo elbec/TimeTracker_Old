@@ -37,7 +37,7 @@ namespace TimeTracker
         public DateTime EndTime;
         public bool isTimerRunning;
 
-        public TimeSpan getTotalDuration(int index)
+        public TimeSpan getTotalDuration()
         {
             if (StartTime != null)
             {
@@ -75,17 +75,13 @@ namespace TimeTracker
 
             readFromJson();
             //set next id
-            var lastId = 0;
-
             foreach (headData item in _allHeadData)
             {
                 createNewEntry(item);
-                if (item.id > lastId)
-                    lastId = item.id;
+     //           updateView();
             }
-            id = lastId + 1;
 
-            updateView();
+
 
         }
 
@@ -135,7 +131,7 @@ namespace TimeTracker
                             var myId = myStack.Name.Split('_');
 
                             var findData = _allHeadData.Find(x => x.id.ToString() == myId[1]);
-                            lab1.Content = findData.timerData.getTotalDuration(0).ToString();
+                            lab1.Content = findData.timerData.getTotalDuration().ToString();
                          //   lab1.Content = myTimerData.getTotalDuration(int.Parse(myId[1])).ToString();
                         }
 
@@ -206,9 +202,7 @@ namespace TimeTracker
 
         private void addDetailStack(StackPanel parentStack, headData newData)
         {
-            StackPanel issue = addIssue(newData);
-           // id += 1;
-            parentStack.Children.Add(issue);
+            
         }
 
         private StackPanel addIssue(headData newData)
@@ -248,7 +242,7 @@ namespace TimeTracker
             totalDuration.Name = "Duration";
             totalDuration.FontSize = 15;
             totalDuration.Foreground = blueColor;
-            totalDuration.Content = "3:00";
+            totalDuration.Content = newData.timerData.getTotalDuration();
             totalDuration.Width = 90;
             totalDuration.Height = 30;
 
@@ -423,7 +417,9 @@ namespace TimeTracker
             myHeaderData.createDate = DateTime.Now.ToString("ddMMyyyy");
             codePopup.IsOpen = false;
 
-            saveToJson();
+            _allHeadData.Add(myHeaderData);
+            writeToJson();
+            id += 1;
 
             createNewEntry(myHeaderData);
         }
@@ -445,7 +441,9 @@ namespace TimeTracker
                 StackPanel stack = SearchVisualTree(mainStackPanel, "Day_" + newData.createDate);
                 if (stack != null)
                 {
-                    addDetailStack(stack, newData);
+                    StackPanel issue = addIssue(newData);
+                    id = newData.id + 1;
+                    stack.Children.Add(issue);
                 }
 
                 updateView();
@@ -454,15 +452,6 @@ namespace TimeTracker
 
         private void Image_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
         {
-            //if (!myTimerData.isTimerRunning)
-            //{
-            //    myTimerData.Start(0);
-            //    StartStopTimer.Source = new BitmapImage(new Uri("Assets/stop-circle-regular.png", UriKind.Relative));
-            //} else
-            //{
-            //    myTimerData.Stop(0);
-            //    StartStopTimer.Source = new BitmapImage(new Uri("Assets/play-circle-regular.png", UriKind.Relative));
-            //}
 
         }
 
@@ -533,12 +522,6 @@ namespace TimeTracker
 
         ///  ###################### JSON ################################################
         ///  
-        public void saveToJson()
-        {
-            _allHeadData.Add(myHeaderData);
-            writeToJson();
-        }
-
         public void writeToJson()
         {
             using (StreamWriter file = File.CreateText(@"C:\Temp\output.txt"))
