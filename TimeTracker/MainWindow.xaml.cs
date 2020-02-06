@@ -44,9 +44,9 @@ namespace TimeTracker
                 var start = StartTime;
                 var stop = EndTime;
 
-                return stop.Subtract(start);
+                return stop.Subtract(start).StripMilliseconds();
             }
-            return TimeSpan.FromSeconds(10);
+            return TimeSpan.FromMinutes(0);
         }
     }
 
