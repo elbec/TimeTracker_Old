@@ -110,6 +110,7 @@
     <Compile Include="Task.cs" />
     <Compile Include="Extensions\TimeExtensions.cs" />
     <Compile Include="Recorder.cs" />
+    <Compile Include="UXDefaults.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

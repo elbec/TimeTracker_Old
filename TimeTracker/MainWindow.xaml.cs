@@ -19,11 +19,6 @@ using System.Windows.Shapes;
 
 namespace TimeTracker
 {
-
-
-
-
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -31,13 +26,10 @@ namespace TimeTracker
     {
         List<Task> _allHeadData = new List<Task>();
         Task myHeaderData = new Task();
-//        Recorder myTimerData = new Recorder();
         int id = 0;
         StackPanel mainStack;
         Popup codePopup = new Popup();
-        private SolidColorBrush blueColor = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#003241"));
-
-
+       
         public MainWindow()
         {
             InitializeComponent();
@@ -130,7 +122,7 @@ namespace TimeTracker
 
             Label label = new Label();
             label.FontSize = 15;
-            label.Foreground = Brushes.Green;
+            label.Foreground = UXDefaults.ColorGreen;
             label.Content = dayName;
             label.FontWeight = FontWeights.Bold;
             label.Name = "titleLabel" + dayName;
@@ -174,11 +166,6 @@ namespace TimeTracker
             return dayPanel;
         }
 
-        private void addDetailStack(StackPanel parentStack, Task newData)
-        {
-            
-        }
-
         private StackPanel addIssue(Task newData)
         {
             StackPanel titleSubtitleTime = new StackPanel();
@@ -198,14 +185,14 @@ namespace TimeTracker
 
             Label titleLabel = new Label();
             titleLabel.FontSize = 15;
-            titleLabel.Foreground = Brushes.LightSlateGray;
+            titleLabel.Foreground = UXDefaults.ColorGray;
             titleLabel.Content = newData.title;
             titleLabel.Width = 400;
 
             Label subtitleLabel = new Label();
             subtitleLabel.FontSize = 15;
             subtitleLabel.FontWeight = FontWeights.Bold;
-            subtitleLabel.Foreground = blueColor;
+            subtitleLabel.Foreground = UXDefaults.ColorBlue;
             subtitleLabel.Content = newData.subtitle;
             subtitleLabel.Width = 400;
 
@@ -215,7 +202,7 @@ namespace TimeTracker
             Label totalDuration = new Label();
             totalDuration.Name = "Duration";
             totalDuration.FontSize = 15;
-            totalDuration.Foreground = blueColor;
+            totalDuration.Foreground = UXDefaults.ColorBlue;
             totalDuration.Content = newData.timerData.getTotalDuration();
             totalDuration.Width = 90;
             totalDuration.Height = 30;
@@ -434,7 +421,7 @@ namespace TimeTracker
         private void showPopUp()
         {
             Border border = new Border();
-            border.BorderBrush = blueColor;
+            border.BorderBrush = UXDefaults.ColorBlue;
             border.BorderThickness = new Thickness(2);
 
             TextBox title = new TextBox();
@@ -443,7 +430,7 @@ namespace TimeTracker
             title.Width = 250;
             title.Margin = new Thickness(20, 20, 20, 10);
             title.Background = Brushes.White;
-            title.Foreground = blueColor;
+            title.Foreground = UXDefaults.ColorBlue;
             title.Opacity = 0.8;
 
             TextBox subtitle = new TextBox();
@@ -452,10 +439,10 @@ namespace TimeTracker
             subtitle.Width = 250;
             subtitle.Margin = new Thickness(20, 0, 20, 10);
             subtitle.Background = Brushes.White;
-            subtitle.Foreground = blueColor;
+            subtitle.Foreground = UXDefaults.ColorBlue;
 
             Button button = new Button();
-            button.Background = blueColor;
+            button.Background = UXDefaults.ColorBlue;
             button.Foreground = Brushes.White;
             button.Width = 100;
             button.Height = 30;
