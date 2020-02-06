@@ -20,44 +20,18 @@ using System.Windows.Shapes;
 namespace TimeTracker
 {
 
-    struct headData
-    {
-        public int id;
-        public String title;
-        public String subtitle;
-        public String createDate;
-        public timerData timerData;
-        
-    }
 
-    struct timerData
-    {
 
-        public DateTime StartTime;
-        public DateTime EndTime;
-        public bool isTimerRunning;
 
-        public TimeSpan getTotalDuration()
-        {
-            if (StartTime != null)
-            {
-                var start = StartTime;
-                var stop = EndTime;
-
-                return stop.Subtract(start).StripMilliseconds();
-            }
-            return TimeSpan.FromMinutes(0);
-        }
-    }
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<headData> _allHeadData = new List<headData>();
-        headData myHeaderData = new headData();
-//        timerData myTimerData = new timerData();
+        List<Task> _allHeadData = new List<Task>();
+        Task myHeaderData = new Task();
+//        Recorder myTimerData = new Recorder();
         int id = 0;
         StackPanel mainStack;
         Popup codePopup = new Popup();
@@ -75,7 +49,7 @@ namespace TimeTracker
 
             readFromJson();
             //set next id
-            foreach (headData item in _allHeadData)
+            foreach (Task item in _allHeadData)
             {
                 createNewEntry(item);
      //           updateView();
@@ -200,12 +174,12 @@ namespace TimeTracker
             return dayPanel;
         }
 
-        private void addDetailStack(StackPanel parentStack, headData newData)
+        private void addDetailStack(StackPanel parentStack, Task newData)
         {
             
         }
 
-        private StackPanel addIssue(headData newData)
+        private StackPanel addIssue(Task newData)
         {
             StackPanel titleSubtitleTime = new StackPanel();
             titleSubtitleTime.Name = "Issue_" + id.ToString() + "_" + newData.createDate;
@@ -344,18 +318,18 @@ namespace TimeTracker
             var stack = image.Parent as StackPanel;
             string[] getId = stack.Name.Split('_');
 
-            headData findData = _allHeadData.Find(x => x.id.ToString() == getId[1]);
+            Task findData = _allHeadData.Find(x => x.id.ToString() == getId[1]);
             if (!findData.timerData.isTimerRunning)
             {
                 image.Source = new BitmapImage(new Uri("Assets/stop-circle-regular.png", UriKind.Relative));
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
 
-                timerData newTimerData = new timerData();
+                Recorder newTimerData = new Recorder();
                 newTimerData.StartTime = DateTime.Now;
                 newTimerData.isTimerRunning = true;
 
-                headData newData = new headData()
+                Task newData = new Task()
                 {
                     id = findData.id,
                     title = findData.title,
@@ -372,11 +346,11 @@ namespace TimeTracker
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
 
-                timerData oldTimerData = findData.timerData;
+                Recorder oldTimerData = findData.timerData;
                 oldTimerData.EndTime = DateTime.Now;
                 oldTimerData.isTimerRunning = false;
 
-                headData newData = new headData()
+                Task newData = new Task()
                 {
                     id = findData.id,
                     title = findData.title,
@@ -424,7 +398,7 @@ namespace TimeTracker
             createNewEntry(myHeaderData);
         }
 
-        private void createNewEntry(headData newData)
+        private void createNewEntry(Task newData)
         {
             if (newData.title != "Title" && newData.subtitle != "Subtitle")
             {
@@ -538,7 +512,7 @@ namespace TimeTracker
                 using (StreamReader file = File.OpenText(path))
                 {
                     JsonSerializer serializer = new JsonSerializer();
-                    List<headData> allData = (List<headData>)serializer.Deserialize(file, typeof(List<headData>));
+                    List<Task> allData = (List<Task>)serializer.Deserialize(file, typeof(List<Task>));
                     if (allData != null)
                         _allHeadData = allData;
                 }
