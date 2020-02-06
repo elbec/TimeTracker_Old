@@ -13,7 +13,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="500"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Rectangle Grid.Row="0" Grid.Column="0" Fill="#003241" Grid.ColumnSpan="2" MouseLeftButtonDown="Window_MouseDown"></Rectangle>
@@ -34,13 +34,14 @@
         </Grid>
 
 
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.Column="0">
+            <Grid Name="DataGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="437*"/>
+                </Grid.ColumnDefinitions>
 
-        <Grid Name="DataGrid" Grid.Row="1" Grid.Column="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="437*"/>
-            </Grid.ColumnDefinitions>
-
-        </Grid>
+            </Grid>
+        </ScrollViewer>
 
     </Grid>
 
