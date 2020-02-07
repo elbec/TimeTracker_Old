@@ -19,11 +19,6 @@ using System.Windows.Shapes;
 
 namespace TimeTracker
 {
-
-
-
-
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -31,7 +26,6 @@ namespace TimeTracker
     {
         List<Task> _allHeadData = new List<Task>();
         Task myHeaderData = new Task();
-//        Recorder myTimerData = new Recorder();
         int id = 0;
         StackPanel mainStack;
         Popup codePopup = new Popup();
@@ -52,9 +46,6 @@ namespace TimeTracker
                 createNewEntry(item);
      //           updateView();
             }
-
-
-
         }
 
         ///  ###################### UPDATE ################################################
@@ -170,11 +161,6 @@ namespace TimeTracker
             dayPanel.Children.Add(titleStack);
             dayPanel.Children.Add(detailStack);
             return dayPanel;
-        }
-
-        private void addDetailStack(StackPanel parentStack, Task newData)
-        {
-            
         }
 
         private StackPanel addIssue(Task newData)
@@ -302,13 +288,6 @@ namespace TimeTracker
         }
 
         /// ######################ACTIONS################################################
-
-        /// <summary>
-        /// Action for start and stop button - left side of title subtitle stackPanel
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-
         private void StartStopButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var image = sender as Image;
@@ -493,7 +472,7 @@ namespace TimeTracker
         }
 
         ///  ###################### JSON ################################################
-        ///  
+
         public void writeToJson()
         {
             using (StreamWriter file = File.CreateText(@"C:\Temp\output.txt"))
