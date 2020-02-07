@@ -24,8 +24,8 @@ namespace TimeTracker
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Task> _allHeadData = new List<Task>();
-        Task myHeaderData = new Task();
+        List<Task> _allTasks = new List<Task>();
+        Task task = new Task();
         int id = 0;
         StackPanel mainStack;
         Popup codePopup = new Popup();
@@ -41,7 +41,7 @@ namespace TimeTracker
 
             readFromJson();
             //set next id
-            foreach (Task item in _allHeadData)
+            foreach (Task item in _allTasks)
             {
                 createNewEntry(item);
      //           updateView();
@@ -93,7 +93,7 @@ namespace TimeTracker
                             var myStack = lab1.Parent as StackPanel;
                             var myId = myStack.Name.Split('_');
 
-                            var findData = _allHeadData.Find(x => x.id.ToString() == myId[1]);
+                            var findData = _allTasks.Find(x => x.id.ToString() == myId[1]);
                             lab1.Content = findData.timerData.getTotalDuration().ToString();
                          //   lab1.Content = myTimerData.getTotalDuration(int.Parse(myId[1])).ToString();
                         }
@@ -295,7 +295,7 @@ namespace TimeTracker
             var stack = image.Parent as StackPanel;
             string[] getId = stack.Name.Split('_');
 
-            Task findData = _allHeadData.Find(x => x.id.ToString() == getId[1]);
+            Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
             if (!findData.timerData.isTimerRunning)
             {
                 image.Source = new BitmapImage(new Uri("Assets/stop-circle-regular.png", UriKind.Relative));
@@ -315,7 +315,7 @@ namespace TimeTracker
                     timerData = newTimerData
                 };
 
-                _allHeadData[index] = newData;
+                _allTasks[index] = newData;
             }
             else
             {
@@ -336,7 +336,7 @@ namespace TimeTracker
                     timerData = oldTimerData
                 };
 
-                _allHeadData[index] = newData;
+                _allTasks[index] = newData;
                 writeToJson();
             }
             updateView();
@@ -362,17 +362,17 @@ namespace TimeTracker
 
         private void SaveButton_MouseLeftButtonDown(object sender, EventArgs e, string titleText, string subtitleText)
         {
-            myHeaderData.id = id;
-            myHeaderData.title = titleText;
-            myHeaderData.subtitle = subtitleText;
-            myHeaderData.createDate = DateTime.Now.ToString("ddMMyyyy");
+            task.id = id;
+            task.title = titleText;
+            task.subtitle = subtitleText;
+            task.createDate = DateTime.Now.ToString("ddMMyyyy");
             codePopup.IsOpen = false;
 
-            _allHeadData.Add(myHeaderData);
+            _allTasks.Add(task);
             writeToJson();
             id += 1;
 
-            createNewEntry(myHeaderData);
+            createNewEntry(task);
         }
 
         private void createNewEntry(Task newData)
@@ -478,7 +478,7 @@ namespace TimeTracker
             using (StreamWriter file = File.CreateText(@"C:\Temp\output.txt"))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, _allHeadData);
+                serializer.Serialize(file, _allTasks);
             }
         }
 
@@ -491,7 +491,7 @@ namespace TimeTracker
                     JsonSerializer serializer = new JsonSerializer();
                     List<Task> allData = (List<Task>)serializer.Deserialize(file, typeof(List<Task>));
                     if (allData != null)
-                        _allHeadData = allData;
+                        _allTasks = allData;
                 }
             }
         }
