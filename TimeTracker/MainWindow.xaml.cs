@@ -53,14 +53,14 @@ namespace TimeTracker
         private void updateView()
         {
             //Update TODAY, YESTERDAY,... Title
-            List<StackPanel> allDayPanels = SearchVisualTreeAndReturnList(mainStack, "DayPanel_");
+            List<StackPanel> allDayPanels = Helper.SearchVisualTreeAndReturnList(mainStack, "DayPanel_");
             if (allDayPanels != null)
             {
                 foreach (StackPanel stack in allDayPanels)
                 {
-                    StackPanel titleStack = SearchVisualTree(stack, "stackTitle");
+                    StackPanel titleStack = Helper.SearchVisualTree(stack, "stackTitle");
 
-                    Label lab = SearchVisualTreeForLabel(titleStack, "titleLabel");
+                    Label lab = Helper.SearchVisualTreeForLabel(titleStack, "titleLabel");
                     //get date
                     string titleStackDate = lab.Name.ToString();
                     String[] date = titleStackDate.Split('_');
@@ -82,12 +82,12 @@ namespace TimeTracker
                     }
 
                     //Update Detail
-                    StackPanel dayStack = SearchVisualTree(stack, "Day_" + date[1]);
+                    StackPanel dayStack = Helper.SearchVisualTree(stack, "Day_" + date[1]);
 
-                    List<StackPanel> detailStacks = SearchVisualTreeAndReturnList(dayStack, "Issue_");
+                    List<StackPanel> detailStacks = Helper.SearchVisualTreeAndReturnList(dayStack, "Issue_");
                     foreach (StackPanel detail in detailStacks)
                     {
-                        Label lab1 = SearchVisualTreeForLabel(detail, "Duration");
+                        Label lab1 = Helper.SearchVisualTreeForLabel(detail, "Duration");
                         if (lab1 != null)
                         {
                             var myStack = lab1.Parent as StackPanel;
@@ -140,7 +140,7 @@ namespace TimeTracker
             {
                // var id = 1;
                
-                StackPanel stack = SearchVisualTree(dayPanel, "Day_" + date[1]);
+                StackPanel stack = Helper.SearchVisualTree(dayPanel, "Day_" + date[1]);
 
                     if (stack.Visibility == Visibility.Visible)
                     {
@@ -211,81 +211,6 @@ namespace TimeTracker
             return titleSubtitleTime;
         }
 
-        /// ######################HELPER################################################
-        private StackPanel SearchVisualTree(DependencyObject targetElement, string controlName)
-        {
-            var count = VisualTreeHelper.GetChildrenCount(targetElement);
-            if (count == 0)
-                return null;
-
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is StackPanel)
-                {
-                    StackPanel targetItem = (StackPanel)child;
-
-                    if (targetItem.Name.Contains(controlName))
-                    {
-                        return targetItem;
-                    }
-                }
-                else
-                {
-                    SearchVisualTree(child, controlName);
-                }
-            }
-            return null;
-        }
-
-        private Label SearchVisualTreeForLabel(DependencyObject targetElement, string controlName)
-        {
-            var count = VisualTreeHelper.GetChildrenCount(targetElement);
-            if (count == 0)
-                return null;
-
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is Label)
-                {
-                    Label targetItem = (Label)child;
-
-                    if (targetItem.Name.Contains(controlName))
-                    {
-                        return targetItem;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private List<StackPanel> SearchVisualTreeAndReturnList(DependencyObject targetElement, string controlName)
-        {
-            List<StackPanel> allStackPanels = new List<StackPanel>();
-            var count = VisualTreeHelper.GetChildrenCount(targetElement);
-            if (count == 0)
-                return null;
-
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is StackPanel)
-                {
-                    StackPanel targetItem = (StackPanel)child;
-
-                    if (targetItem.Name.Contains(controlName))
-                    {
-                        allStackPanels.Add(targetItem);
-                    }
-                }
-                else
-                {
-                    SearchVisualTree(child, controlName);
-                }
-            }
-            return allStackPanels;
-        }
 
         /// ######################ACTIONS################################################
         private void StartStopButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -380,7 +305,7 @@ namespace TimeTracker
             if (newData.title != "Title" && newData.subtitle != "Subtitle")
             {
 
-                StackPanel mainStackPanel = SearchVisualTree(mainStack, "DayPanel_" + newData.createDate);
+                StackPanel mainStackPanel = Helper.SearchVisualTree(mainStack, "DayPanel_" + newData.createDate);
 
                 if (mainStackPanel == null)
                 {
@@ -389,7 +314,7 @@ namespace TimeTracker
                     mainStackPanel = dayPanel;
                 }
 
-                StackPanel stack = SearchVisualTree(mainStackPanel, "Day_" + newData.createDate);
+                StackPanel stack = Helper.SearchVisualTree(mainStackPanel, "Day_" + newData.createDate);
                 if (stack != null)
                 {
                     StackPanel issue = addIssue(newData);
