@@ -107,6 +107,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="UXDefaults.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="Extensions\TimeExtensions.cs" />
     <Compile Include="Recorder.cs" />
