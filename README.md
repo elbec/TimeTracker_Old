@@ -4,4 +4,4 @@ The TimeTracker App tracks your working time. You can assign a title and subtitl
 
 Tags: working time, time recorder, time tracker, time management
 
-![appOverview](TimeTracker/Documentation/appOverview.jpg?raw=true "appOverview")
+![appOverview](https://github.com/elbec/TimeTracker/blob/master/TimeTracker/Documentation/appOverview.png?raw=true)
