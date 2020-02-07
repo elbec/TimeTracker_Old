@@ -176,6 +176,9 @@
     <Resource Include="Assets\play-circle-regular.png" />
     <Resource Include="Assets\stop-circle-regular.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Documentation\appOverview.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
