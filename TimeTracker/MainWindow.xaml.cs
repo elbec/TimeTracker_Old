@@ -29,7 +29,6 @@ namespace TimeTracker
         int id = 0;
         StackPanel mainStack;
         Popup codePopup = new Popup();
-
         public MainWindow()
         {
             InitializeComponent();
@@ -39,7 +38,7 @@ namespace TimeTracker
 
             DataGrid.Children.Add(mainStack);
 
-            readFromJson();
+            _allTasks = Json.readFromJson();
             //set next id
             foreach (Task item in _allTasks)
             {
@@ -262,7 +261,7 @@ namespace TimeTracker
                 };
 
                 _allTasks[index] = newData;
-                writeToJson();
+                Json.writeToJson(_allTasks);
             }
             updateView();
         }
@@ -284,7 +283,6 @@ namespace TimeTracker
         {
 
         }
-
         private void SaveButton_MouseLeftButtonDown(object sender, EventArgs e, string titleText, string subtitleText)
         {
             task.id = id;
@@ -294,12 +292,11 @@ namespace TimeTracker
             codePopup.IsOpen = false;
 
             _allTasks.Add(task);
-            writeToJson();
+            Json.writeToJson(_allTasks);
             id += 1;
 
             createNewEntry(task);
         }
-
         private void createNewEntry(Task newData)
         {
             if (newData.title != "Title" && newData.subtitle != "Subtitle")
@@ -396,34 +393,11 @@ namespace TimeTracker
             codePopup.StaysOpen = false;
         }
 
-        ///  ###################### JSON ################################################
 
-        public void writeToJson()
-        {
-            using (StreamWriter file = File.CreateText(@"C:\Temp\output.txt"))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, _allTasks);
-            }
-        }
-
-        public void readFromJson()
-        {
-            string path = @"C:\Temp\output.txt";
-            if (File.Exists(path)) {
-                using (StreamReader file = File.OpenText(path))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    List<Task> allData = (List<Task>)serializer.Deserialize(file, typeof(List<Task>));
-                    if (allData != null)
-                        _allTasks = allData;
-                }
-            }
-        }
 
         private void Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            System.Windows.Application.Current.Shutdown();
+            Application.Current.Shutdown();
         }
     }
 }
