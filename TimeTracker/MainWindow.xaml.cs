@@ -32,7 +32,6 @@ namespace TimeTracker
         public MainWindow()
         {
             InitializeComponent();
-
             mainStack = new StackPanel();
             mainStack.Orientation = Orientation.Vertical;
 
@@ -40,10 +39,13 @@ namespace TimeTracker
 
             _allTasks = Json.readFromJson();
             //set next id
-            foreach (Task item in _allTasks)
-            {
-                createNewEntry(item);
-     //           updateView();
+            if (_allTasks != null)
+            { 
+                foreach (Task item in _allTasks)
+                {
+                    createNewEntry(item);
+                    //           updateView();
+                }
             }
         }
 
@@ -90,11 +92,9 @@ namespace TimeTracker
                         if (lab1 != null)
                         {
                             var myStack = lab1.Parent as StackPanel;
-                            var myId = myStack.Name.Split('_');
 
-                            var findData = _allTasks.Find(x => x.id.ToString() == myId[1]);
+                            var findData = _allTasks.Find(x => x.id == getIssueId(myStack));
                             lab1.Content = findData.timerData.getTotalDuration().ToString();
-                         //   lab1.Content = myTimerData.getTotalDuration(int.Parse(myId[1])).ToString();
                         }
 
                     }
@@ -176,6 +176,13 @@ namespace TimeTracker
             startStopButton.Height = 40;
             startStopButton.MouseLeftButtonDown += StartStopButton_MouseLeftButtonDown;
 
+            Image editButton = new Image();
+            BitmapImage edit = new BitmapImage(new Uri("Assets/ellipsis-v-solid.png", UriKind.Relative));
+            editButton.Source = edit;
+            editButton.Width = 40;
+            editButton.Height = 40;
+            editButton.MouseLeftButtonDown += EditButton_MouseLeftButtonDown;
+
             StackPanel titleSubtitle = new StackPanel();
             titleSubtitle.Orientation = Orientation.Vertical;
 
@@ -204,6 +211,7 @@ namespace TimeTracker
             totalDuration.Height = 30;
 
             titleSubtitleTime.Children.Add(startStopButton);
+            titleSubtitleTime.Children.Add(editButton);
             titleSubtitleTime.Children.Add(titleSubtitle);
             titleSubtitleTime.Children.Add(totalDuration);
 
@@ -266,6 +274,22 @@ namespace TimeTracker
             updateView();
         }
 
+        private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Image mySender = sender as Image;
+            StackPanel parent = mySender.Parent as StackPanel;
+
+            _allTasks.RemoveAll(r => r.id == getIssueId(parent));
+            Json.writeToJson(_allTasks);
+            updateView();
+        }
+
+        private int getIssueId(StackPanel stack)
+        {
+            var myId = stack.Name.Split('_');
+            return int.Parse(myId[1]);
+        }
+
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -291,7 +315,14 @@ namespace TimeTracker
             task.createDate = DateTime.Now.ToString("ddMMyyyy");
             codePopup.IsOpen = false;
 
-            _allTasks.Add(task);
+            if (_allTasks == null)
+            {
+                _allTasks = new List<Task>{ task };
+            }
+            else
+            {
+                _allTasks.Add(task);
+            }
             Json.writeToJson(_allTasks);
             id += 1;
 
@@ -392,8 +423,6 @@ namespace TimeTracker
         {
             codePopup.StaysOpen = false;
         }
-
-
 
         private void Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

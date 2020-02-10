@@ -10,7 +10,7 @@ namespace TimeTracker
 {
     static class Json
     {
-        private static string filePath = @"C:\Temp\output.txt";
+        private static string filePath = @"C:\Temp\TimeTrackerData.json";
 
         ///  ###################### JSON ################################################
         public static void writeToJson(List<Task> allTasks)
