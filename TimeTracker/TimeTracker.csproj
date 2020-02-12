@@ -170,9 +170,7 @@
     <Resource Include="bars-solid.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Documentation\appOverview.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Documentation\appOverview.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
