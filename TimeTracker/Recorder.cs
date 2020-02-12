@@ -16,8 +16,8 @@ namespace TimeTracker
                 var stop = EndTime;
 
                 return stop.Subtract(start).StripMilliseconds();
-            }
-            return TimeSpan.FromMinutes(0);
+            } else
+                return TimeSpan.FromMinutes(0);
         }
     }
 }

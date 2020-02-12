@@ -19,34 +19,57 @@ using System.Windows.Shapes;
 
 namespace TimeTracker
 {
+
+       
+    
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Task> _allTasks = new List<Task>();
         Task task = new Task();
-        int id = 0;
+        List<Task> _allTasks = new List<Task>();
+
         StackPanel mainStack;
         Popup codePopup = new Popup();
+
+        int id = 0;
+        
+        int runningTimerId;
+        Image actualPlayStopImage;
+
         public MainWindow()
         {
             InitializeComponent();
             mainStack = new StackPanel();
+            actualPlayStopImage = null;
             mainStack.Orientation = Orientation.Vertical;
+            StopTimer.Visibility = Visibility.Hidden;
 
             DataGrid.Children.Add(mainStack);
 
             _allTasks = Json.readFromJson();
-            //set next id
-            if (_allTasks != null)
-            { 
+            createAllObjects();
+        }
+
+        private void deleteAllObjects()
+        {
+            mainStack.Children.Clear();
+            id = 0;
+        }
+
+        private void createAllObjects()
+        {
+            if (_allTasks != null && _allTasks.Count > 0)
+            {
                 foreach (Task item in _allTasks)
                 {
                     createNewEntry(item);
-                    //           updateView();
                 }
+                id = _allTasks.Last().id;
             }
+            updateView();
         }
 
         ///  ###################### UPDATE ################################################
@@ -162,7 +185,7 @@ namespace TimeTracker
         private StackPanel addIssue(Task newData)
         {
             StackPanel titleSubtitleTime = new StackPanel();
-            titleSubtitleTime.Name = "Issue_" + id.ToString() + "_" + newData.createDate;
+            titleSubtitleTime.Name = "Issue_" + newData.id.ToString() + "_" + newData.createDate;
             titleSubtitleTime.Orientation = Orientation.Horizontal;
             titleSubtitleTime.VerticalAlignment = VerticalAlignment.Center;
 
@@ -192,6 +215,7 @@ namespace TimeTracker
             subtitleLabel.FontSize = 15;
             subtitleLabel.FontWeight = FontWeights.Bold;
             subtitleLabel.Foreground = UXDefaults.ColorGray;
+
             subtitleLabel.Content = newData.subtitle;
             subtitleLabel.Width = 400;
 
@@ -219,16 +243,17 @@ namespace TimeTracker
         private void StartStopButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var image = sender as Image;
-
+            actualPlayStopImage = image;
             var stack = image.Parent as StackPanel;
             string[] getId = stack.Name.Split('_');
 
             Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
+            int findIndex = _allTasks.FindIndex(x => x.id.ToString() == getId[1]);
+            runningTimerId = int.Parse(getId[1]);
             if (!findData.timerData.isTimerRunning)
             {
                 image.Source = ResourcePathToImageSource("stop");
-                var myId = stack.Name.Split('_');
-                int index = int.Parse(getId[1]);
+                StopTimer.Visibility = Visibility.Visible;
 
                 Recorder newTimerData = new Recorder();
                 newTimerData.StartTime = DateTime.Now;
@@ -243,13 +268,12 @@ namespace TimeTracker
                     timerData = newTimerData
                 };
 
-                _allTasks[index] = newData;
+                _allTasks[findIndex] = newData;
             }
             else
             {
                 image.Source = ResourcePathToImageSource("play");
-                var myId = stack.Name.Split('_');
-                int index = int.Parse(getId[1]);
+                StopTimer.Visibility = Visibility.Hidden;
 
                 Recorder oldTimerData = findData.timerData;
                 oldTimerData.EndTime = DateTime.Now;
@@ -264,10 +288,11 @@ namespace TimeTracker
                     timerData = oldTimerData
                 };
 
-                _allTasks[index] = newData;
+                _allTasks[findIndex] = newData;
                 Json.writeToJson(_allTasks);
+                updateView();
             }
-            updateView();
+            
         }
 
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -277,7 +302,8 @@ namespace TimeTracker
 
             _allTasks.RemoveAll(r => r.id == getIssueId(parent));
             Json.writeToJson(_allTasks);
-            updateView();
+            deleteAllObjects();
+            createAllObjects();
         }
 
         private int getIssueId(StackPanel stack)
@@ -296,6 +322,7 @@ namespace TimeTracker
 
         private void addNewProject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            id += 1;
             showPopUp();
         }
 
@@ -320,8 +347,6 @@ namespace TimeTracker
                 _allTasks.Add(task);
             }
             Json.writeToJson(_allTasks);
-            id += 1;
-
             createNewEntry(task);
         }
         private void createNewEntry(Task newData)
@@ -342,7 +367,6 @@ namespace TimeTracker
                 if (stack != null)
                 {
                     StackPanel issue = addIssue(newData);
-                    id = newData.id + 1;
                     stack.Children.Add(issue);
                 }
 
@@ -427,6 +451,34 @@ namespace TimeTracker
         private void Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void StopTimer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Task findData = _allTasks.Find(x => x.id.ToString() == runningTimerId.ToString());
+            int findIndex = _allTasks.FindIndex(x => x.id.ToString() == runningTimerId.ToString());
+            if (findData.timerData.isTimerRunning) { 
+               actualPlayStopImage.Source = ResourcePathToImageSource("play");
+                StopTimer.Visibility = Visibility.Hidden;
+
+                Recorder oldTimerData = findData.timerData;
+                oldTimerData.EndTime = DateTime.Now;
+                oldTimerData.isTimerRunning = false;
+
+                Task newData = new Task()
+                {
+                    id = findData.id,
+                    title = findData.title,
+                    subtitle = findData.subtitle,
+                    createDate = findData.createDate,
+                    timerData = oldTimerData
+                };
+
+                _allTasks[findIndex] = newData;
+                Json.writeToJson(_allTasks);
+                updateView();
+            }
+
         }
     }
 }
