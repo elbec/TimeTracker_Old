@@ -305,7 +305,15 @@ namespace TimeTracker
 
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            var image = sender as Image;
+            actualPlayStopImage = image;
+            var stack = image.Parent as StackPanel;
+            string[] getId = stack.Name.Split('_');
 
+            Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
+            int findIndex = _allTasks.FindIndex(x => x.id.ToString() == getId[1]);
+
+            showPopUp();
         }
 
         private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
