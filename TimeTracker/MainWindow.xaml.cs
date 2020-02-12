@@ -197,10 +197,17 @@ namespace TimeTracker
             startStopButton.MouseLeftButtonDown += StartStopButton_MouseLeftButtonDown;
 
             Image editButton = new Image();
-            editButton.Source = ResourcePathToImageSource("trash");
+            editButton.Source = ResourcePathToImageSource("edit");
+            editButton.Margin = new Thickness(5, 5, 5, 5);
             editButton.Width = 20;
             editButton.Height = 20;
             editButton.MouseLeftButtonDown += EditButton_MouseLeftButtonDown;
+
+            Image deleteButton = new Image();
+            deleteButton.Source = ResourcePathToImageSource("trash");
+            deleteButton.Width = 20;
+            deleteButton.Height = 20;
+            deleteButton.MouseLeftButtonDown += DeleteButton_MouseLeftButtonDown;
 
             StackPanel titleSubtitle = new StackPanel();
             titleSubtitle.Orientation = Orientation.Vertical;
@@ -232,6 +239,7 @@ namespace TimeTracker
 
             titleSubtitleTime.Children.Add(startStopButton);
             titleSubtitleTime.Children.Add(editButton);
+            titleSubtitleTime.Children.Add(deleteButton);
             titleSubtitleTime.Children.Add(titleSubtitle);
             titleSubtitleTime.Children.Add(totalDuration);
 
@@ -296,6 +304,11 @@ namespace TimeTracker
         }
 
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Image mySender = sender as Image;
             StackPanel parent = mySender.Parent as StackPanel;
