@@ -107,6 +107,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helper.cs" />
+    <Compile Include="Json.cs" />
+    <Compile Include="UXDefaults.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="Extensions\TimeExtensions.cs" />
     <Compile Include="Recorder.cs" />
@@ -168,14 +171,7 @@
     <Resource Include="bars-solid.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\chevron-up-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\chevron-down-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\play-circle-regular.png" />
-    <Resource Include="Assets\stop-circle-regular.png" />
+    <Resource Include="Documentation\appOverview.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
