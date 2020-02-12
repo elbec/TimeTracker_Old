@@ -29,22 +29,23 @@ namespace TimeTracker
         int id = 0;
         StackPanel mainStack;
         Popup codePopup = new Popup();
-
         public MainWindow()
         {
             InitializeComponent();
-
             mainStack = new StackPanel();
             mainStack.Orientation = Orientation.Vertical;
 
             DataGrid.Children.Add(mainStack);
 
-            readFromJson();
+            _allTasks = Json.readFromJson();
             //set next id
-            foreach (Task item in _allTasks)
-            {
-                createNewEntry(item);
-     //           updateView();
+            if (_allTasks != null)
+            { 
+                foreach (Task item in _allTasks)
+                {
+                    createNewEntry(item);
+                    //           updateView();
+                }
             }
         }
 
@@ -53,14 +54,14 @@ namespace TimeTracker
         private void updateView()
         {
             //Update TODAY, YESTERDAY,... Title
-            List<StackPanel> allDayPanels = SearchVisualTreeAndReturnList(mainStack, "DayPanel_");
+            List<StackPanel> allDayPanels = Helper.SearchVisualTreeAndReturnList(mainStack, "DayPanel_");
             if (allDayPanels != null)
             {
                 foreach (StackPanel stack in allDayPanels)
                 {
-                    StackPanel titleStack = SearchVisualTree(stack, "stackTitle");
+                    StackPanel titleStack = Helper.SearchVisualTree(stack, "stackTitle");
 
-                    Label lab = SearchVisualTreeForLabel(titleStack, "titleLabel");
+                    Label lab = Helper.SearchVisualTreeForLabel(titleStack, "titleLabel");
                     //get date
                     string titleStackDate = lab.Name.ToString();
                     String[] date = titleStackDate.Split('_');
@@ -82,20 +83,18 @@ namespace TimeTracker
                     }
 
                     //Update Detail
-                    StackPanel dayStack = SearchVisualTree(stack, "Day_" + date[1]);
+                    StackPanel dayStack = Helper.SearchVisualTree(stack, "Day_" + date[1]);
 
-                    List<StackPanel> detailStacks = SearchVisualTreeAndReturnList(dayStack, "Issue_");
+                    List<StackPanel> detailStacks = Helper.SearchVisualTreeAndReturnList(dayStack, "Issue_");
                     foreach (StackPanel detail in detailStacks)
                     {
-                        Label lab1 = SearchVisualTreeForLabel(detail, "Duration");
+                        Label lab1 = Helper.SearchVisualTreeForLabel(detail, "Duration");
                         if (lab1 != null)
                         {
                             var myStack = lab1.Parent as StackPanel;
-                            var myId = myStack.Name.Split('_');
 
-                            var findData = _allTasks.Find(x => x.id.ToString() == myId[1]);
+                            var findData = _allTasks.Find(x => x.id == getIssueId(myStack));
                             lab1.Content = findData.timerData.getTotalDuration().ToString();
-                         //   lab1.Content = myTimerData.getTotalDuration(int.Parse(myId[1])).ToString();
                         }
 
                     }
@@ -131,28 +130,25 @@ namespace TimeTracker
             detailStack.Name = "Day_" + date[1];
 
             Image minMaximize = new Image();
-            BitmapImage image = new BitmapImage(new Uri("Assets/chevron-up-solid.png", UriKind.Relative));
-            minMaximize.Source = image;
-            minMaximize.Width = 20;
-            minMaximize.Height = 20;
+            minMaximize.Source = ResourcePathToImageSource("up");
+            minMaximize.Width = 12;
+            minMaximize.Height = 12;
 
             minMaximize.MouseLeftButtonDown += (s, e) =>
             {
-               // var id = 1;
                
-                StackPanel stack = SearchVisualTree(dayPanel, "Day_" + date[1]);
+                StackPanel stack = Helper.SearchVisualTree(dayPanel, "Day_" + date[1]);
 
                     if (stack.Visibility == Visibility.Visible)
                     {
-                        minMaximize.Source = new BitmapImage(new Uri("Assets/chevron-down-solid.png", UriKind.Relative));
+                    minMaximize.Source = ResourcePathToImageSource("down");
                     stack.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
-                        minMaximize.Source = new BitmapImage(new Uri("Assets/chevron-up-solid.png", UriKind.Relative));
+                    minMaximize.Source = ResourcePathToImageSource("up");
                     stack.Visibility = Visibility.Visible;
-                    }
-                            
+                    }  
             };
 
             titleStack.Children.Add(label);
@@ -171,11 +167,17 @@ namespace TimeTracker
             titleSubtitleTime.VerticalAlignment = VerticalAlignment.Center;
 
             Image startStopButton = new Image();
-            BitmapImage image = new BitmapImage(new Uri("Assets/play-circle-regular.png", UriKind.Relative));
-            startStopButton.Source = image;
-            startStopButton.Width = 40;
-            startStopButton.Height = 40;
+            startStopButton.Source = ResourcePathToImageSource("play");
+            startStopButton.Margin = new Thickness(10, 10, 10, 10);
+            startStopButton.Width = 20;
+            startStopButton.Height = 20;
             startStopButton.MouseLeftButtonDown += StartStopButton_MouseLeftButtonDown;
+
+            Image editButton = new Image();
+            editButton.Source = ResourcePathToImageSource("trash");
+            editButton.Width = 20;
+            editButton.Height = 20;
+            editButton.MouseLeftButtonDown += EditButton_MouseLeftButtonDown;
 
             StackPanel titleSubtitle = new StackPanel();
             titleSubtitle.Orientation = Orientation.Vertical;
@@ -189,7 +191,7 @@ namespace TimeTracker
             Label subtitleLabel = new Label();
             subtitleLabel.FontSize = 15;
             subtitleLabel.FontWeight = FontWeights.Bold;
-            subtitleLabel.Foreground = UXDefaults.ColorBlue;
+            subtitleLabel.Foreground = UXDefaults.ColorGray;
             subtitleLabel.Content = newData.subtitle;
             subtitleLabel.Width = 400;
 
@@ -205,87 +207,13 @@ namespace TimeTracker
             totalDuration.Height = 30;
 
             titleSubtitleTime.Children.Add(startStopButton);
+            titleSubtitleTime.Children.Add(editButton);
             titleSubtitleTime.Children.Add(titleSubtitle);
             titleSubtitleTime.Children.Add(totalDuration);
 
             return titleSubtitleTime;
         }
 
-        /// ######################HELPER################################################
-        private StackPanel SearchVisualTree(DependencyObject targetElement, string controlName)
-        {
-            var count = VisualTreeHelper.GetChildrenCount(targetElement);
-            if (count == 0)
-                return null;
-
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is StackPanel)
-                {
-                    StackPanel targetItem = (StackPanel)child;
-
-                    if (targetItem.Name.Contains(controlName))
-                    {
-                        return targetItem;
-                    }
-                }
-                else
-                {
-                    SearchVisualTree(child, controlName);
-                }
-            }
-            return null;
-        }
-
-        private Label SearchVisualTreeForLabel(DependencyObject targetElement, string controlName)
-        {
-            var count = VisualTreeHelper.GetChildrenCount(targetElement);
-            if (count == 0)
-                return null;
-
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is Label)
-                {
-                    Label targetItem = (Label)child;
-
-                    if (targetItem.Name.Contains(controlName))
-                    {
-                        return targetItem;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private List<StackPanel> SearchVisualTreeAndReturnList(DependencyObject targetElement, string controlName)
-        {
-            List<StackPanel> allStackPanels = new List<StackPanel>();
-            var count = VisualTreeHelper.GetChildrenCount(targetElement);
-            if (count == 0)
-                return null;
-
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is StackPanel)
-                {
-                    StackPanel targetItem = (StackPanel)child;
-
-                    if (targetItem.Name.Contains(controlName))
-                    {
-                        allStackPanels.Add(targetItem);
-                    }
-                }
-                else
-                {
-                    SearchVisualTree(child, controlName);
-                }
-            }
-            return allStackPanels;
-        }
 
         /// ######################ACTIONS################################################
         private void StartStopButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -298,7 +226,7 @@ namespace TimeTracker
             Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
             if (!findData.timerData.isTimerRunning)
             {
-                image.Source = new BitmapImage(new Uri("Assets/stop-circle-regular.png", UriKind.Relative));
+                image.Source = ResourcePathToImageSource("stop");
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
 
@@ -319,7 +247,7 @@ namespace TimeTracker
             }
             else
             {
-                image.Source = new BitmapImage(new Uri("Assets/play-circle-regular.png", UriKind.Relative));
+                image.Source = ResourcePathToImageSource("play");
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
 
@@ -337,9 +265,25 @@ namespace TimeTracker
                 };
 
                 _allTasks[index] = newData;
-                writeToJson();
+                Json.writeToJson(_allTasks);
             }
             updateView();
+        }
+
+        private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Image mySender = sender as Image;
+            StackPanel parent = mySender.Parent as StackPanel;
+
+            _allTasks.RemoveAll(r => r.id == getIssueId(parent));
+            Json.writeToJson(_allTasks);
+            updateView();
+        }
+
+        private int getIssueId(StackPanel stack)
+        {
+            var myId = stack.Name.Split('_');
+            return int.Parse(myId[1]);
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -359,7 +303,6 @@ namespace TimeTracker
         {
 
         }
-
         private void SaveButton_MouseLeftButtonDown(object sender, EventArgs e, string titleText, string subtitleText)
         {
             task.id = id;
@@ -368,19 +311,25 @@ namespace TimeTracker
             task.createDate = DateTime.Now.ToString("ddMMyyyy");
             codePopup.IsOpen = false;
 
-            _allTasks.Add(task);
-            writeToJson();
+            if (_allTasks == null)
+            {
+                _allTasks = new List<Task>{ task };
+            }
+            else
+            {
+                _allTasks.Add(task);
+            }
+            Json.writeToJson(_allTasks);
             id += 1;
 
             createNewEntry(task);
         }
-
         private void createNewEntry(Task newData)
         {
             if (newData.title != "Title" && newData.subtitle != "Subtitle")
             {
 
-                StackPanel mainStackPanel = SearchVisualTree(mainStack, "DayPanel_" + newData.createDate);
+                StackPanel mainStackPanel = Helper.SearchVisualTree(mainStack, "DayPanel_" + newData.createDate);
 
                 if (mainStackPanel == null)
                 {
@@ -389,7 +338,7 @@ namespace TimeTracker
                     mainStackPanel = dayPanel;
                 }
 
-                StackPanel stack = SearchVisualTree(mainStackPanel, "Day_" + newData.createDate);
+                StackPanel stack = Helper.SearchVisualTree(mainStackPanel, "Day_" + newData.createDate);
                 if (stack != null)
                 {
                     StackPanel issue = addIssue(newData);
@@ -460,6 +409,10 @@ namespace TimeTracker
          codePopup.IsOpen = true;
 
         }
+        private ImageSource ResourcePathToImageSource(string resourcesName)
+        {
+            return (DrawingImage)Application.Current.TryFindResource(resourcesName);
+        }
 
         private void OpenPopupButton_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -471,34 +424,9 @@ namespace TimeTracker
             codePopup.StaysOpen = false;
         }
 
-        ///  ###################### JSON ################################################
-
-        public void writeToJson()
-        {
-            using (StreamWriter file = File.CreateText(@"C:\Temp\output.txt"))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, _allTasks);
-            }
-        }
-
-        public void readFromJson()
-        {
-            string path = @"C:\Temp\output.txt";
-            if (File.Exists(path)) {
-                using (StreamReader file = File.OpenText(path))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    List<Task> allData = (List<Task>)serializer.Deserialize(file, typeof(List<Task>));
-                    if (allData != null)
-                        _allTasks = allData;
-                }
-            }
-        }
-
         private void Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            System.Windows.Application.Current.Shutdown();
+            Application.Current.Shutdown();
         }
     }
 }

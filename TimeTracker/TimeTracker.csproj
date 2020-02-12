@@ -107,6 +107,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helper.cs" />
+    <Compile Include="Json.cs" />
     <Compile Include="UXDefaults.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="Extensions\TimeExtensions.cs" />
@@ -166,16 +168,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="bars-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\chevron-up-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\chevron-down-solid.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\play-circle-regular.png" />
-    <Resource Include="Assets\stop-circle-regular.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Documentation\appOverview.png" />
