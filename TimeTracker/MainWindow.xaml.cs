@@ -34,6 +34,7 @@ namespace TimeTracker
             InitializeComponent();
             mainStack = new StackPanel();
             mainStack.Orientation = Orientation.Vertical;
+            StopTimer.Visibility = Visibility.Hidden;
 
             DataGrid.Children.Add(mainStack);
 
@@ -227,6 +228,7 @@ namespace TimeTracker
             if (!findData.timerData.isTimerRunning)
             {
                 image.Source = ResourcePathToImageSource("stop");
+                StopTimer.Visibility = Visibility.Visible;
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
 
@@ -248,6 +250,7 @@ namespace TimeTracker
             else
             {
                 image.Source = ResourcePathToImageSource("play");
+                StopTimer.Visibility = Visibility.Hidden;
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
 
@@ -427,6 +430,11 @@ namespace TimeTracker
         private void Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void StopTimer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }
