@@ -9,7 +9,7 @@ Tags: working time, time recorder, time tracker, time management
 # Roadmap
 
 Goals through Mar 31, 2020:
-- New Feature: User can delete topic.
+- New Feature: User can delete topic. [FINISHED]
 - New Feature: User can add time later.
 
 Goals through May 31, 2020:
