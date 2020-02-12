@@ -130,28 +130,25 @@ namespace TimeTracker
             detailStack.Name = "Day_" + date[1];
 
             Image minMaximize = new Image();
-            BitmapImage image = new BitmapImage(new Uri("Assets/chevron-up-solid.png", UriKind.Relative));
-            minMaximize.Source = image;
-            minMaximize.Width = 20;
-            minMaximize.Height = 20;
+            minMaximize.Source = ResourcePathToImageSource("up");
+            minMaximize.Width = 12;
+            minMaximize.Height = 12;
 
             minMaximize.MouseLeftButtonDown += (s, e) =>
             {
-               // var id = 1;
                
                 StackPanel stack = Helper.SearchVisualTree(dayPanel, "Day_" + date[1]);
 
                     if (stack.Visibility == Visibility.Visible)
                     {
-                        minMaximize.Source = new BitmapImage(new Uri("Assets/chevron-down-solid.png", UriKind.Relative));
+                    minMaximize.Source = ResourcePathToImageSource("down");
                     stack.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
-                        minMaximize.Source = new BitmapImage(new Uri("Assets/chevron-up-solid.png", UriKind.Relative));
+                    minMaximize.Source = ResourcePathToImageSource("up");
                     stack.Visibility = Visibility.Visible;
-                    }
-                            
+                    }  
             };
 
             titleStack.Children.Add(label);
@@ -170,17 +167,16 @@ namespace TimeTracker
             titleSubtitleTime.VerticalAlignment = VerticalAlignment.Center;
 
             Image startStopButton = new Image();
-            BitmapImage image = new BitmapImage(new Uri("Assets/play-circle-regular.png", UriKind.Relative));
-            startStopButton.Source = image;
-            startStopButton.Width = 40;
-            startStopButton.Height = 40;
+            startStopButton.Source = ResourcePathToImageSource("play");
+            startStopButton.Margin = new Thickness(10, 10, 10, 10);
+            startStopButton.Width = 20;
+            startStopButton.Height = 20;
             startStopButton.MouseLeftButtonDown += StartStopButton_MouseLeftButtonDown;
 
             Image editButton = new Image();
-            BitmapImage edit = new BitmapImage(new Uri("Assets/ellipsis-v-solid.png", UriKind.Relative));
-            editButton.Source = edit;
-            editButton.Width = 40;
-            editButton.Height = 40;
+            editButton.Source = ResourcePathToImageSource("trash");
+            editButton.Width = 20;
+            editButton.Height = 20;
             editButton.MouseLeftButtonDown += EditButton_MouseLeftButtonDown;
 
             StackPanel titleSubtitle = new StackPanel();
@@ -195,7 +191,7 @@ namespace TimeTracker
             Label subtitleLabel = new Label();
             subtitleLabel.FontSize = 15;
             subtitleLabel.FontWeight = FontWeights.Bold;
-            subtitleLabel.Foreground = UXDefaults.ColorBlue;
+            subtitleLabel.Foreground = UXDefaults.ColorGray;
             subtitleLabel.Content = newData.subtitle;
             subtitleLabel.Width = 400;
 
@@ -230,7 +226,7 @@ namespace TimeTracker
             Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
             if (!findData.timerData.isTimerRunning)
             {
-                image.Source = new BitmapImage(new Uri("Assets/stop-circle-regular.png", UriKind.Relative));
+                image.Source = ResourcePathToImageSource("stop");
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
 
@@ -251,7 +247,7 @@ namespace TimeTracker
             }
             else
             {
-                image.Source = new BitmapImage(new Uri("Assets/play-circle-regular.png", UriKind.Relative));
+                image.Source = ResourcePathToImageSource("play");
                 var myId = stack.Name.Split('_');
                 int index = int.Parse(getId[1]);
 
@@ -412,6 +408,10 @@ namespace TimeTracker
 
          codePopup.IsOpen = true;
 
+        }
+        private ImageSource ResourcePathToImageSource(string resourcesName)
+        {
+            return (DrawingImage)Application.Current.TryFindResource(resourcesName);
         }
 
         private void OpenPopupButton_MouseEnter(object sender, MouseEventArgs e)
