@@ -33,6 +33,7 @@ namespace TimeTracker
 
         StackPanel mainStack;
         Popup codePopup = new Popup();
+
         int id = 0;
         
         int runningTimerId;
@@ -214,6 +215,7 @@ namespace TimeTracker
             subtitleLabel.FontSize = 15;
             subtitleLabel.FontWeight = FontWeights.Bold;
             subtitleLabel.Foreground = UXDefaults.ColorGray;
+
             subtitleLabel.Content = newData.subtitle;
             subtitleLabel.Width = 400;
 
