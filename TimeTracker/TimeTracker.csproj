@@ -112,7 +112,6 @@
     </ApplicationDefinition>
     <Compile Include="Helper.cs" />
     <Compile Include="Json.cs" />
-    <Compile Include="UXDefaults.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="Extensions\TimeExtensions.cs" />
     <Compile Include="Recorder.cs" />
