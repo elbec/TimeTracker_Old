@@ -20,19 +20,36 @@ using System.Windows.Shapes;
 namespace TimeTracker
 {
 
-       
-    
+
+    public static class WindowReferences
+    {
+        public static MyPopup codepopup { get; set; }
+    }
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        Task task = new Task();
         List<Task> _allTasks = new List<Task>();
+        private Task task { get; set; }
+
+        public  Task myTask
+        {
+            get
+            {
+                return task;
+            }
+            set
+            {
+                task = value;
+                createNewEntry(task);
+                updateView();
+            }
+        }
 
         StackPanel mainStack;
-        Popup codePopup = new Popup();
+        MyPopup codePopup;
 
         int id = 0;
         
@@ -41,6 +58,7 @@ namespace TimeTracker
 
         public MainWindow()
         {
+            codePopup = new MyPopup(this);
             InitializeComponent();
             mainStack = new StackPanel();
             actualPlayStopImage = null;
@@ -202,6 +220,8 @@ namespace TimeTracker
             editButton.Width = 20;
             editButton.Height = 20;
             editButton.MouseLeftButtonDown += EditButton_MouseLeftButtonDown;
+            editButton.MouseEnter += OpenPopupButton_MouseEnter;
+            editButton.MouseLeave += ClosePopupButton_MouseLeave;
 
             Image deleteButton = new Image();
             deleteButton.Source = ResourcePathToImageSource("trash");
@@ -245,7 +265,6 @@ namespace TimeTracker
 
             return titleSubtitleTime;
         }
-
 
         /// ######################ACTIONS################################################
         private void StartStopButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -313,7 +332,12 @@ namespace TimeTracker
             Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
             int findIndex = _allTasks.FindIndex(x => x.id.ToString() == getId[1]);
 
-            showPopUp();
+            //  showPopUp();
+            codePopup.popup.PlacementTarget = image;
+            codePopup.currentID = int.Parse(getId[1]);
+            codePopup._allTasks = _allTasks;
+            codePopup.popup.IsOpen = true;
+   
         }
 
         private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -344,32 +368,19 @@ namespace TimeTracker
         private void addNewProject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             id += 1;
-            showPopUp();
+          //  showPopUp();
+           
+            codePopup.popup.PlacementTarget = Add;
+            codePopup.currentID = id;
+            codePopup._allTasks = _allTasks;
+            codePopup.popup.IsOpen = true;
         }
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
 
         }
-        private void SaveButton_MouseLeftButtonDown(object sender, EventArgs e, string titleText, string subtitleText)
-        {
-            task.id = id;
-            task.title = titleText;
-            task.subtitle = subtitleText;
-            task.createDate = DateTime.Now.ToString("ddMMyyyy");
-            codePopup.IsOpen = false;
-
-            if (_allTasks == null)
-            {
-                _allTasks = new List<Task>{ task };
-            }
-            else
-            {
-                _allTasks.Add(task);
-            }
-            Json.writeToJson(_allTasks);
-            createNewEntry(task);
-        }
+        
         private void createNewEntry(Task newData)
         {
             if (newData.title != "Title" && newData.subtitle != "Subtitle")
@@ -400,60 +411,6 @@ namespace TimeTracker
 
         }
 
-        /// ######################POPUP################################################
-
-        private void showPopUp()
-        {
-            Border border = new Border();
-            border.BorderBrush = UXDefaults.ColorBlue;
-            border.BorderThickness = new Thickness(2);
-
-            TextBox title = new TextBox();
-            title.Text = "Title";
-            title.Height = 30;
-            title.Width = 250;
-            title.Margin = new Thickness(20, 20, 20, 10);
-            title.Background = UXDefaults.ColorWhite;
-            title.Foreground = UXDefaults.ColorBlue;
-            title.Opacity = 0.8;
-
-            TextBox subtitle = new TextBox();
-            subtitle.Text = "Subtitle";
-            subtitle.Height = 30;
-            subtitle.Width = 250;
-            subtitle.Margin = new Thickness(20, 0, 20, 10);
-            subtitle.Background = UXDefaults.ColorWhite;
-            subtitle.Foreground = UXDefaults.ColorBlue;
-
-            Button button = new Button();
-            button.Background = UXDefaults.ColorBlue;
-            button.Foreground = UXDefaults.ColorWhite;
-            button.Width = 100;
-            button.Height = 30;
-            button.Margin = new Thickness(0, 10, 0, 20);
-            button.Content = "SAVE";
-            button.Click += (sender, EventArgs) => { SaveButton_MouseLeftButtonDown(sender, EventArgs, title.Text, subtitle.Text); };
-
-            StackPanel stack = new StackPanel();
-            stack.Orientation = Orientation.Vertical;
-            stack.Background = UXDefaults.ColorWhite;
-
-            stack.Children.Add(title);
-            stack.Children.Add(subtitle);
-            stack.Children.Add(button);
-
-            Grid grid = new Grid();
-            grid.Children.Add(stack);
-            grid.Children.Add(border);
-
-            codePopup.Child = grid;
-
-            codePopup.PlacementTarget = Add;
-            codePopup.Placement = PlacementMode.Left;
-
-         codePopup.IsOpen = true;
-
-        }
         private ImageSource ResourcePathToImageSource(string resourcesName)
         {
             return (DrawingImage)Application.Current.TryFindResource(resourcesName);
@@ -461,12 +418,12 @@ namespace TimeTracker
 
         private void OpenPopupButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            codePopup.StaysOpen = true;
+            codePopup.popup.StaysOpen = true;
         }
 
-        private void OpenPopupButton_MouseLeave(object sender, MouseEventArgs e)
+        private void ClosePopupButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            codePopup.StaysOpen = false;
+            codePopup.popup.StaysOpen = false;
         }
 
         private void Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
