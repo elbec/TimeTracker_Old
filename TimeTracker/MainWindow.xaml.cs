@@ -19,13 +19,6 @@ using System.Windows.Shapes;
 
 namespace TimeTracker
 {
-
-
-    public static class WindowReferences
-    {
-        public static MyPopup codepopup { get; set; }
-    }
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -55,8 +48,6 @@ namespace TimeTracker
                     deleteAllObjects();
                     createAllObjects();
                 }
-                
-                
             }
         }
 
@@ -156,13 +147,11 @@ namespace TimeTracker
         }
 
         ///  ######################ADD FUNCTIONS################################################
-
         private StackPanel addDayStack(string dayName)
         {
             StackPanel dayPanel = new StackPanel();
             dayPanel.Orientation = Orientation.Vertical;
             dayPanel.Name = dayName;
-
 
             // ''''''''''TITLE''''''''''''''''''''''''''''''''''''
             StackPanel titleStack = new StackPanel();
@@ -189,7 +178,6 @@ namespace TimeTracker
 
             minMaximize.MouseLeftButtonDown += (s, e) =>
             {
-               
                 StackPanel stack = Helper.SearchVisualTree(dayPanel, "Day_" + date[1]);
 
                     if (stack.Visibility == Visibility.Visible)
@@ -331,7 +319,6 @@ namespace TimeTracker
                 Json.writeToJson(_allTasks);
                 updateView();
             }
-            
         }
 
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

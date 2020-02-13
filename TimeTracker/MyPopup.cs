@@ -78,19 +78,14 @@ namespace TimeTracker
             saveButton.Margin = new Thickness(0, 10, 0, 20);
             saveButton.Content = "SAVE";
             saveButton.Click += (sender, EventArgs) => { SaveButton_MouseLeftButtonDown(sender, EventArgs, titleTextBox.Text, subtitleTextBox.Text); };
-
            
             stack.Orientation = Orientation.Vertical;
             stack.Background = UXDefaults.ColorWhite;
 
             stack.Children.Add(titleTextBox);
             stack.Children.Add(subtitleTextBox);
-
-
             stack.Children.Add(startTimeTextBox);
             stack.Children.Add(stopTimeTextBox);
-
-
             stack.Children.Add(saveButton);
 
             Grid grid = new Grid();
@@ -101,7 +96,6 @@ namespace TimeTracker
             popup.Placement = PlacementMode.Left;
             popup.StaysOpen = false;
         }
-
         public void updateView(int id)
         {
             if (id == 0)
@@ -121,7 +115,6 @@ namespace TimeTracker
                 stopTimeTextBox.Text = getTask.timerData.EndTime.ToString("HH:mm:ss");
             }
         }
-
         public void hideTimeTextBox()
         {
             foreach(var textBox in stack.Children)
@@ -136,7 +129,6 @@ namespace TimeTracker
                
             }
         }
-
         public void showTimeTextBox()
         {
             foreach (var textBox in stack.Children)
@@ -149,10 +141,8 @@ namespace TimeTracker
                         box.Visibility = Visibility.Visible;
                     }
                 }
-
             }
         }
-
         private void SaveButton_MouseLeftButtonDown(object sender, EventArgs e, string titleText, string subtitleText)
         {
             Task task = new Task();
@@ -186,7 +176,6 @@ namespace TimeTracker
             _parentWin.myTask = task;
             
         }
-
         private void resetData()
         {
             titleTextBox.Text = "Title";
