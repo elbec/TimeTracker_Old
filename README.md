@@ -10,7 +10,7 @@ Tags: working time, time recorder, time tracker, time management
 
 Goals through Mar 31, 2020:
 - New Feature: User can delete topic. [FINISHED]
-- New Feature: User can add time later.
+- New Feature: User can add time later e.g. can edit topic. [FINISHED]
 
 Goals through May 31, 2020:
 - New Featrue: User can add multiple time records per topic.
