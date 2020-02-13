@@ -2,7 +2,7 @@
 
 namespace TimeTracker
 {
-    struct Recorder
+    public struct Recorder
     {
         public DateTime StartTime;
         public DateTime EndTime;

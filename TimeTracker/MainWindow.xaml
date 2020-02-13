@@ -29,7 +29,7 @@
             <Image Grid.Row="0" Grid.Column="0" Source="{DynamicResource menu}" Margin="10" Height="15" Width="15" MouseLeftButtonDown="Image_MouseLeftButtonDown"></Image>
             <Label Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="25" FontFamily="Arial" MouseLeftButtonDown="Window_MouseDown">Time Tracker</Label>
             <Image Name="StopTimer" Grid.Row="0" Grid.Column="2" Source="{DynamicResource stop}" Margin="10" Height="20" Width="20" MouseLeftButtonDown="StopTimer_MouseLeftButtonDown"></Image>
-            <Image Name="Add" Grid.Row="0" Grid.Column="3" Source="{DynamicResource plus}" Margin="10" Height="20" Width="20" MouseLeftButtonDown="addNewProject_MouseLeftButtonDown" MouseEnter="OpenPopupButton_MouseEnter" MouseLeave="OpenPopupButton_MouseLeave"></Image>
+            <Image Name="Add" Grid.Row="0" Grid.Column="3" Source="{DynamicResource plus}" Margin="10" Height="20" Width="20" MouseLeftButtonDown="addNewProject_MouseLeftButtonDown" MouseEnter="OpenPopupButton_MouseEnter" MouseLeave="ClosePopupButton_MouseLeave"></Image>
             <Image Name="Close" Grid.Row="0" Grid.Column="4" Source="{DynamicResource close}" Margin="10" Height="15" Width="15" MouseLeftButtonDown="Close_MouseLeftButtonDown"></Image>
         </Grid>
 
@@ -39,7 +39,6 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="437*"/>
                 </Grid.ColumnDefinitions>
-
             </Grid>
         </ScrollViewer>
 
