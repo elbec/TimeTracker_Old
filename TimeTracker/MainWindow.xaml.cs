@@ -33,6 +33,7 @@ namespace TimeTracker
     {
         List<Task> _allTasks = new List<Task>();
         private Task task { get; set; }
+        private bool isEditing = false;
 
         public  Task myTask
         {
@@ -43,8 +44,19 @@ namespace TimeTracker
             set
             {
                 task = value;
-                createNewEntry(task);
-                updateView();
+                if (!isEditing)
+                {
+                    createNewEntry(task);
+                    updateView();
+                } else
+                {
+                    int findIndex = _allTasks.FindIndex(x => x.id == task.id);
+                    _allTasks[findIndex] = task;
+                    deleteAllObjects();
+                    createAllObjects();
+                }
+                
+                
             }
         }
 
@@ -324,6 +336,7 @@ namespace TimeTracker
 
         private void EditButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            isEditing = true;
             var image = sender as Image;
             actualPlayStopImage = image;
             var stack = image.Parent as StackPanel;
@@ -332,12 +345,11 @@ namespace TimeTracker
             Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
             int findIndex = _allTasks.FindIndex(x => x.id.ToString() == getId[1]);
 
-            //  showPopUp();
-            codePopup.popup.PlacementTarget = image;
-            codePopup.currentID = int.Parse(getId[1]);
             codePopup._allTasks = _allTasks;
+            codePopup.popup.PlacementTarget = image;
+            codePopup.showTimeTextBox();
+            codePopup.updateView(int.Parse(getId[1]));
             codePopup.popup.IsOpen = true;
-   
         }
 
         private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -368,11 +380,12 @@ namespace TimeTracker
         private void addNewProject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             id += 1;
-          //  showPopUp();
-           
-            codePopup.popup.PlacementTarget = Add;
-            codePopup.currentID = id;
+            isEditing = false;
             codePopup._allTasks = _allTasks;
+            codePopup.currentID = id;
+            codePopup.popup.PlacementTarget = Add;
+            codePopup.hideTimeTextBox();
+            codePopup.updateView(0);
             codePopup.popup.IsOpen = true;
         }
 
@@ -430,7 +443,7 @@ namespace TimeTracker
         {
             Application.Current.Shutdown();
         }
-
+        
         private void StopTimer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Task findData = _allTasks.Find(x => x.id.ToString() == runningTimerId.ToString());

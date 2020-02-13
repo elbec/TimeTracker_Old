@@ -14,10 +14,14 @@ namespace TimeTracker
         public Button saveButton;
         private TextBox titleTextBox;
         private TextBox subtitleTextBox;
+        private TextBox startTimeTextBox;
+        private TextBox stopTimeTextBox;
         public Popup popup = new Popup();
         public int currentID;
-        public List<Task> _allTasks = new List<Task>();
+        public List<Task> _allTasks;
         private MainWindow _parentWin;
+        private StackPanel stack = new StackPanel();
+        private bool isEditing = false;
 
         public MyPopup(MainWindow parentWin)
         {
@@ -48,6 +52,24 @@ namespace TimeTracker
             subtitleTextBox.Background = UXDefaults.ColorWhite;
             subtitleTextBox.Foreground = UXDefaults.ColorBlue;
 
+            startTimeTextBox = new TextBox();
+            startTimeTextBox.Name = "start_time";
+            startTimeTextBox.Text = "00:00:00";
+            startTimeTextBox.Height = 30;
+            startTimeTextBox.Width = 250;
+            startTimeTextBox.Margin = new Thickness(20, 0, 20, 10);
+            startTimeTextBox.Background = UXDefaults.ColorWhite;
+            startTimeTextBox.Foreground = UXDefaults.ColorBlue;
+
+            stopTimeTextBox = new TextBox();
+            stopTimeTextBox.Name = "stop_time";
+            stopTimeTextBox.Text = "00:00:00";
+            stopTimeTextBox.Height = 30;
+            stopTimeTextBox.Width = 250;
+            stopTimeTextBox.Margin = new Thickness(20, 0, 20, 10);
+            stopTimeTextBox.Background = UXDefaults.ColorWhite;
+            stopTimeTextBox.Foreground = UXDefaults.ColorBlue;
+
             saveButton = new Button();
             saveButton.Background = UXDefaults.ColorBlue;
             saveButton.Foreground = UXDefaults.ColorWhite;
@@ -57,12 +79,18 @@ namespace TimeTracker
             saveButton.Content = "SAVE";
             saveButton.Click += (sender, EventArgs) => { SaveButton_MouseLeftButtonDown(sender, EventArgs, titleTextBox.Text, subtitleTextBox.Text); };
 
-            StackPanel stack = new StackPanel();
+           
             stack.Orientation = Orientation.Vertical;
             stack.Background = UXDefaults.ColorWhite;
 
             stack.Children.Add(titleTextBox);
             stack.Children.Add(subtitleTextBox);
+
+
+            stack.Children.Add(startTimeTextBox);
+            stack.Children.Add(stopTimeTextBox);
+
+
             stack.Children.Add(saveButton);
 
             Grid grid = new Grid();
@@ -72,6 +100,57 @@ namespace TimeTracker
             popup.Child = grid;
             popup.Placement = PlacementMode.Left;
             popup.StaysOpen = false;
+        }
+
+        public void updateView(int id)
+        {
+            if (id == 0)
+            {
+                isEditing = false;
+                titleTextBox.Text = "Title";
+                subtitleTextBox.Text = "Subtitle";
+            }
+            else
+            {
+                isEditing = true;
+                currentID = id;
+                Task getTask = _allTasks.Find(x => x.id == currentID);
+                titleTextBox.Text = getTask.title;
+                subtitleTextBox.Text = getTask.subtitle;
+                startTimeTextBox.Text = getTask.timerData.StartTime.ToString("HH:mm:ss");
+                stopTimeTextBox.Text = getTask.timerData.EndTime.ToString("HH:mm:ss");
+            }
+        }
+
+        public void hideTimeTextBox()
+        {
+            foreach(var textBox in stack.Children)
+            {
+                TextBox box = textBox as TextBox;
+                if (box != null) {
+                    if (box.Name.Contains("_time"))
+                    {
+                        box.Visibility = Visibility.Collapsed;
+                    }
+                }
+               
+            }
+        }
+
+        public void showTimeTextBox()
+        {
+            foreach (var textBox in stack.Children)
+            {
+                TextBox box = textBox as TextBox;
+                if (box != null)
+                {
+                    if (box.Name.Contains("_time"))
+                    {
+                        box.Visibility = Visibility.Visible;
+                    }
+                }
+
+            }
         }
 
         private void SaveButton_MouseLeftButtonDown(object sender, EventArgs e, string titleText, string subtitleText)
@@ -91,7 +170,17 @@ namespace TimeTracker
             }
             else
             {
-                _allTasks.Add(task);
+                if (isEditing)
+                {
+                    int oldIndex = _allTasks.FindIndex(x => x.id == currentID);
+                    task.timerData.StartTime = Convert.ToDateTime(startTimeTextBox.Text);
+                    task.timerData.EndTime = Convert.ToDateTime(stopTimeTextBox.Text);
+                    _allTasks[oldIndex] = task;
+                }
+                else
+                {
+                    _allTasks.Add(task);
+                }
             }
             Json.writeToJson(_allTasks);
             _parentWin.myTask = task;
