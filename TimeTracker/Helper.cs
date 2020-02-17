@@ -87,5 +87,28 @@ namespace TimeTracker
             }
             return allStackPanels;
         }
+
+        public static void CreateCSVFromGenericList<T>(List<T> list, string csvCompletePath)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.AppendLine("ID;Title;Subtitle;CreateDate;StartTime;EndTime");
+            foreach (T item in list)
+            {
+                if (item.GetType() == typeof(Task)) {
+                    if (item != null)
+                    {
+                        Task newItem = item as Task;
+                        var line = String.Format("{0};{1};{2};{3};{4};{5}", newItem.id.ToString(), newItem.title, newItem.subtitle, newItem.createDate, newItem.timerData.StartTime.ToString(), newItem.timerData.EndTime.ToString());
+                        sb.AppendLine(line);
+                    }
+                }
+            }
+
+            Console.WriteLine(sb.ToString());
+            System.IO.File.WriteAllText(
+                System.IO.Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory, csvCompletePath),
+                sb.ToString());
+        }
     }
 }
