@@ -154,26 +154,31 @@ namespace TimeTracker
             resetData();
             popup.IsOpen = false;
 
-            if (_allTasks == null)
+            if (task.title != "Title" && task.subtitle != "Subtitle")
             {
-                _allTasks = new List<Task> { task };
-            }
-            else
-            {
-                if (isEditing)
+
+                if (_allTasks == null)
                 {
-                    int oldIndex = _allTasks.FindIndex(x => x.id == currentID);
-                    task.timerData.StartTime = Convert.ToDateTime(startTimeTextBox.Text);
-                    task.timerData.EndTime = Convert.ToDateTime(stopTimeTextBox.Text);
-                    _allTasks[oldIndex] = task;
+                    _allTasks = new List<Task> { task };
                 }
                 else
                 {
-                    _allTasks.Add(task);
+                    if (isEditing)
+                    {
+                        int oldIndex = _allTasks.FindIndex(x => x.id == currentID);
+                        task.timerData.StartTime = Convert.ToDateTime(startTimeTextBox.Text);
+                        task.timerData.EndTime = Convert.ToDateTime(stopTimeTextBox.Text);
+                        task.createDate = _allTasks[oldIndex].createDate;
+                        _allTasks[oldIndex] = task;
+                    }
+                    else
+                    {
+                        _allTasks.Add(task);
+                    }
                 }
+                Json.writeToJson(_allTasks);
+                _parentWin.myTask = task;
             }
-            Json.writeToJson(_allTasks);
-            _parentWin.myTask = task;
             
         }
         private void resetData()

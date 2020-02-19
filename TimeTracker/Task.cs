@@ -2,7 +2,7 @@
 
 namespace TimeTracker
 {
-    public struct Task
+    public class Task
     {
         public int id;
         public String title;
