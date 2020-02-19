@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -378,7 +379,14 @@ namespace TimeTracker
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                Image image = sender as Image;
+                ContextMenu contextMenu = image.ContextMenu;
+                contextMenu.PlacementTarget = image;
+                contextMenu.IsOpen = true;
+                e.Handled = true;
+            }
         }
         
         private void createNewEntry(Task newData)
@@ -404,11 +412,6 @@ namespace TimeTracker
 
                 updateView();
             }
-        }
-
-        private void Image_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
-        {
-
         }
 
         private ImageSource ResourcePathToImageSource(string resourcesName)
@@ -457,6 +460,22 @@ namespace TimeTracker
                 updateView();
             }
 
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            if (item.Name == "ExportItem")
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = "csv files (*.csv)|*.csv";
+                sfd.RestoreDirectory = true;
+
+                if (sfd.ShowDialog() == true)
+                {
+                    Helper.CreateCSVFromGenericList(_allTasks, sfd.FileName);
+                }
+            }
         }
     }
 }

@@ -91,7 +91,7 @@ namespace TimeTracker
         public static void CreateCSVFromGenericList<T>(List<T> list, string csvCompletePath)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.AppendLine("ID;Title;Subtitle;CreateDate;StartTime;EndTime");
+            sb.AppendLine("Id;Title;Subtitle;CreateDate;StartTime;EndTime");
             foreach (T item in list)
             {
                 if (item.GetType() == typeof(Task)) {
