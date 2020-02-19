@@ -129,8 +129,8 @@ namespace TimeTracker
                         {
                             var myStack = lab1.Parent as StackPanel;
 
-                                var findData = _allTasks.Find(x => x.id == getIssueId(myStack));
-                                lab1.Content = findData.timerData.getTotalDuration().ToString();
+                            var findData = _allTasks.Find(x => x.id == getIssueId(myStack));
+                            lab1.Content = findData.timerData.getTotalDuration().ToString();
                         }
 
                     }
@@ -332,10 +332,10 @@ namespace TimeTracker
             Image mySender = sender as Image;
             StackPanel parent = mySender.Parent as StackPanel;
 
-                _allTasks.RemoveAll(r => r.id == getIssueId(parent));
-                Json.writeToJson(_allTasks);
-                deleteAllObjects();
-                createAllObjects();
+            _allTasks.RemoveAll(r => r.id == getIssueId(parent));
+            Json.writeToJson(_allTasks);
+            deleteAllObjects();
+            createAllObjects();
         }
 
         private int getIssueId(StackPanel stack)
