@@ -110,7 +110,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DropDownButton.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="MyPopup.cs" />
