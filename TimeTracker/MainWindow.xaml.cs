@@ -1,22 +1,13 @@
 ﻿using Microsoft.Win32;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TimeTracker
 {
@@ -138,8 +129,8 @@ namespace TimeTracker
                         {
                             var myStack = lab1.Parent as StackPanel;
 
-                            var findData = _allTasks.Find(x => x.id == getIssueId(myStack));
-                            lab1.Content = findData.timerData.getTotalDuration().ToString();
+                                var findData = _allTasks.Find(x => x.id == getIssueId(myStack));
+                                lab1.Content = findData.timerData.getTotalDuration().ToString();
                         }
 
                     }
@@ -168,7 +159,6 @@ namespace TimeTracker
 
             StackPanel detailStack = new StackPanel();
                         detailStack.Orientation = Orientation.Vertical;
-            //string currentDay = DateTime.Now.ToString("ddMMyyyy");
             string[] date = dayName.Split('_');
             detailStack.Name = "Day_" + date[1];
 
@@ -330,9 +320,6 @@ namespace TimeTracker
             var stack = image.Parent as StackPanel;
             string[] getId = stack.Name.Split('_');
 
-            Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
-            int findIndex = _allTasks.FindIndex(x => x.id.ToString() == getId[1]);
-
             codePopup._allTasks = _allTasks;
             codePopup.popup.PlacementTarget = image;
             codePopup.showTimeTextBox();
@@ -345,10 +332,10 @@ namespace TimeTracker
             Image mySender = sender as Image;
             StackPanel parent = mySender.Parent as StackPanel;
 
-            _allTasks.RemoveAll(r => r.id == getIssueId(parent));
-            Json.writeToJson(_allTasks);
-            deleteAllObjects();
-            createAllObjects();
+                _allTasks.RemoveAll(r => r.id == getIssueId(parent));
+                Json.writeToJson(_allTasks);
+                deleteAllObjects();
+                createAllObjects();
         }
 
         private int getIssueId(StackPanel stack)
