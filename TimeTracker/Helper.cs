@@ -48,13 +48,8 @@ namespace TimeTracker
             {
                 var child = VisualTreeHelper.GetChild(targetElement, i);
                 Label label = child as Label;
-                if (label != null)
-                {
-                    if (label.Name.Contains(controlName))
-                    {
+                if (label != null && label.Name.Contains(controlName))
                         return label;
-                    }
-                }
             }
             return null;
         }
@@ -93,19 +88,17 @@ namespace TimeTracker
             sb.AppendLine("Id;Title;Subtitle;CreateDate;StartTime;EndTime");
             foreach (T item in list)
             {
-                if (item.GetType() == typeof(Task)) {
-                    if (item != null)
-                    {
-                        Task newItem = item as Task;
-                        var line = String.Format("{0};{1};{2};{3};{4};{5}",
-                            newItem.id.ToString(),
-                            newItem.title,
-                            newItem.subtitle,
-                            newItem.createDate,
-                            newItem.timerData.StartTime.ToString(),
-                            newItem.timerData.EndTime.ToString());
-                        sb.AppendLine(line);
-                    }
+                if (item.GetType() == typeof(Task))
+                {
+                    Task newItem = item as Task;
+                    var line = String.Format("{0};{1};{2};{3};{4};{5}",
+                        newItem.id.ToString(),
+                        newItem.title,
+                        newItem.subtitle,
+                        newItem.createDate,
+                        newItem.timerData.StartTime.ToString(),
+                        newItem.timerData.EndTime.ToString());
+                    sb.AppendLine(line);
                 }
             }
 

@@ -117,11 +117,8 @@ namespace TimeTracker
             foreach(var textBox in stack.Children)
             {
                 TextBox box = textBox as TextBox;
-                if (box != null) {
-                    if (box.Name.Contains("_time"))
-                    {
+                if (box != null && box.Name.Contains("_time")) {
                         box.Visibility = Visibility.Collapsed;
-                    }
                 }
                
             }
@@ -131,13 +128,8 @@ namespace TimeTracker
             foreach (var textBox in stack.Children)
             {
                 TextBox box = textBox as TextBox;
-                if (box != null)
-                {
-                    if (box.Name.Contains("_time"))
-                    {
+                if (box != null && box.Name.Contains("_time"))
                         box.Visibility = Visibility.Visible;
-                    }
-                }
             }
         }
         private void SaveButton_MouseLeftButtonDown(object sender, EventArgs e, string titleText, string subtitleText)
