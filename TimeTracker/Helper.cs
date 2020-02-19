@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -22,7 +20,8 @@ namespace TimeTracker
             for (int i = 0; i < count; i++)
             {
                 var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is StackPanel)
+                StackPanel childStack = child as StackPanel;
+                if (childStack != null)
                 {
                     StackPanel targetItem = (StackPanel)child;
 
@@ -33,7 +32,7 @@ namespace TimeTracker
                 }
                 else
                 {
-                    SearchVisualTree(child, controlName);
+                    SearchVisualTree(childStack, controlName);
                 }
             }
             return null;
@@ -48,15 +47,9 @@ namespace TimeTracker
             for (int i = 0; i < count; i++)
             {
                 var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is Label)
-                {
-                    Label targetItem = (Label)child;
-
-                    if (targetItem.Name.Contains(controlName))
-                    {
-                        return targetItem;
-                    }
-                }
+                Label label = child as Label;
+                if (label != null && label.Name.Contains(controlName))
+                        return label;
             }
             return null;
         }
@@ -71,7 +64,8 @@ namespace TimeTracker
             for (int i = 0; i < count; i++)
             {
                 var child = VisualTreeHelper.GetChild(targetElement, i);
-                if (child is StackPanel)
+                StackPanel childStack = child as StackPanel;
+                if (childStack != null)
                 {
                     StackPanel targetItem = (StackPanel)child;
 
@@ -86,6 +80,33 @@ namespace TimeTracker
                 }
             }
             return allStackPanels;
+        }
+
+        public static void CreateCSVFromGenericList<T>(List<T> list, string csvCompletePath)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.AppendLine("Id;Title;Subtitle;CreateDate;StartTime;EndTime");
+            foreach (T item in list)
+            {
+                if (item.GetType() == typeof(Task))
+                {
+                    Task newItem = item as Task;
+                    var line = String.Format("{0};{1};{2};{3};{4};{5}",
+                        newItem.id.ToString(),
+                        newItem.title,
+                        newItem.subtitle,
+                        newItem.createDate,
+                        newItem.timerData.StartTime.ToString(),
+                        newItem.timerData.EndTime.ToString());
+                    sb.AppendLine(line);
+                }
+            }
+
+            Console.WriteLine(sb.ToString());
+            System.IO.File.WriteAllText(
+                System.IO.Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory, csvCompletePath),
+                sb.ToString());
         }
     }
 }

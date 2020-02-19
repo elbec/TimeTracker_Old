@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -120,11 +117,8 @@ namespace TimeTracker
             foreach(var textBox in stack.Children)
             {
                 TextBox box = textBox as TextBox;
-                if (box != null) {
-                    if (box.Name.Contains("_time"))
-                    {
+                if (box != null && box.Name.Contains("_time")) {
                         box.Visibility = Visibility.Collapsed;
-                    }
                 }
                
             }
@@ -134,13 +128,8 @@ namespace TimeTracker
             foreach (var textBox in stack.Children)
             {
                 TextBox box = textBox as TextBox;
-                if (box != null)
-                {
-                    if (box.Name.Contains("_time"))
-                    {
+                if (box != null && box.Name.Contains("_time"))
                         box.Visibility = Visibility.Visible;
-                    }
-                }
             }
         }
         private void SaveButton_MouseLeftButtonDown(object sender, EventArgs e, string titleText, string subtitleText)
@@ -154,26 +143,31 @@ namespace TimeTracker
             resetData();
             popup.IsOpen = false;
 
-            if (_allTasks == null)
+            if (task.title != "Title" && task.subtitle != "Subtitle")
             {
-                _allTasks = new List<Task> { task };
-            }
-            else
-            {
-                if (isEditing)
+
+                if (_allTasks == null)
                 {
-                    int oldIndex = _allTasks.FindIndex(x => x.id == currentID);
-                    task.timerData.StartTime = Convert.ToDateTime(startTimeTextBox.Text);
-                    task.timerData.EndTime = Convert.ToDateTime(stopTimeTextBox.Text);
-                    _allTasks[oldIndex] = task;
+                    _allTasks = new List<Task> { task };
                 }
                 else
                 {
-                    _allTasks.Add(task);
+                    if (isEditing)
+                    {
+                        int oldIndex = _allTasks.FindIndex(x => x.id == currentID);
+                        task.timerData.StartTime = Convert.ToDateTime(startTimeTextBox.Text);
+                        task.timerData.EndTime = Convert.ToDateTime(stopTimeTextBox.Text);
+                        task.createDate = _allTasks[oldIndex].createDate;
+                        _allTasks[oldIndex] = task;
+                    }
+                    else
+                    {
+                        _allTasks.Add(task);
+                    }
                 }
+                Json.writeToJson(_allTasks);
+                _parentWin.myTask = task;
             }
-            Json.writeToJson(_allTasks);
-            _parentWin.myTask = task;
             
         }
         private void resetData()

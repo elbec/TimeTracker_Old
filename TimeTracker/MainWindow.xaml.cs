@@ -1,21 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TimeTracker
 {
@@ -167,7 +159,6 @@ namespace TimeTracker
 
             StackPanel detailStack = new StackPanel();
                         detailStack.Orientation = Orientation.Vertical;
-            //string currentDay = DateTime.Now.ToString("ddMMyyyy");
             string[] date = dayName.Split('_');
             detailStack.Name = "Day_" + date[1];
 
@@ -329,9 +320,6 @@ namespace TimeTracker
             var stack = image.Parent as StackPanel;
             string[] getId = stack.Name.Split('_');
 
-            Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
-            int findIndex = _allTasks.FindIndex(x => x.id.ToString() == getId[1]);
-
             codePopup._allTasks = _allTasks;
             codePopup.popup.PlacementTarget = image;
             codePopup.showTimeTextBox();
@@ -378,7 +366,14 @@ namespace TimeTracker
 
         private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                Image image = sender as Image;
+                ContextMenu contextMenu = image.ContextMenu;
+                contextMenu.PlacementTarget = image;
+                contextMenu.IsOpen = true;
+                e.Handled = true;
+            }
         }
         
         private void createNewEntry(Task newData)
@@ -404,11 +399,6 @@ namespace TimeTracker
 
                 updateView();
             }
-        }
-
-        private void Image_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
-        {
-
         }
 
         private ImageSource ResourcePathToImageSource(string resourcesName)
@@ -457,6 +447,22 @@ namespace TimeTracker
                 updateView();
             }
 
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            if (item.Name == "ExportItem")
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = "csv files (*.csv)|*.csv";
+                sfd.RestoreDirectory = true;
+
+                if (sfd.ShowDialog() == true)
+                {
+                    Helper.CreateCSVFromGenericList(_allTasks, sfd.FileName);
+                }
+            }
         }
     }
 }
