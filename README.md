@@ -14,7 +14,7 @@ Goals through Mar 31, 2020:
 
 Goals through May 31, 2020:
 - New Featrue: User can add multiple time records per topic.
-- New Feature: Export data to different standard formats.
+- New Feature: Export data to different standard formats. [FINISHED]
 
 Goals through Dec 30, 2020:
 - Write UITests
