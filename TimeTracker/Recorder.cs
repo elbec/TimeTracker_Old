@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Threading;
 
 namespace TimeTracker
 {
@@ -7,6 +8,8 @@ namespace TimeTracker
         public DateTime StartTime;
         public DateTime EndTime;
         public bool isTimerRunning;
+        public DispatcherTimer timer;
+        public int counter;
 
         public TimeSpan getTotalDuration()
         {
@@ -18,6 +21,11 @@ namespace TimeTracker
                 return stop.Subtract(start).StripMilliseconds();
             } else
                 return TimeSpan.FromMinutes(0);
+        }
+
+        internal void timer_Tick(object sender, EventArgs e)
+        {
+            counter += 1;
         }
     }
 }

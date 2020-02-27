@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -19,6 +20,7 @@ namespace TimeTracker
         List<Task> _allTasks = new List<Task>();
         private Task task { get; set; }
         private bool isEditing = false;
+        private int activeCounter = 0;
 
         public  Task myTask
         {
@@ -131,6 +133,7 @@ namespace TimeTracker
 
                             var findData = _allTasks.Find(x => x.id == getIssueId(myStack));
                             lab1.Content = findData.timerData.getTotalDuration().ToString();
+                            lab1.Content = activeCounter;
                         }
 
                     }
@@ -257,6 +260,8 @@ namespace TimeTracker
             return titleSubtitleTime;
         }
 
+
+
         /// ######################ACTIONS################################################
         private void StartStopButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -276,6 +281,11 @@ namespace TimeTracker
                 Recorder newTimerData = new Recorder();
                 newTimerData.StartTime = DateTime.Now;
                 newTimerData.isTimerRunning = true;
+                newTimerData.timer = new DispatcherTimer();
+                newTimerData.timer.Interval = TimeSpan.FromSeconds(1);
+                newTimerData.timer.Tick += newTimerData.timer_Tick;
+                newTimerData.timer.Start();
+                activeCounter = newTimerData.counter;
 
                 Task newData = new Task()
                 {
@@ -294,6 +304,8 @@ namespace TimeTracker
                 StopTimer.Visibility = Visibility.Hidden;
 
                 Recorder oldTimerData = findData.timerData;
+                oldTimerData.timer.Stop();
+                oldTimerData.counter = 0;
                 oldTimerData.EndTime = DateTime.Now;
                 oldTimerData.isTimerRunning = false;
 
