@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace TimeTracker
 {
-    class UXDefaults
+    static class UXDefaults
     {
-        static public SolidColorBrush ColorBlue = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#003241"));
-        static public SolidColorBrush ColorGreen = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6fb776"));
-        static public SolidColorBrush ColorGray = Brushes.DimGray;
-        static public SolidColorBrush ColorWhite = Brushes.White;
+        static readonly public SolidColorBrush ColorBlue = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#003241"));
+        static readonly public SolidColorBrush ColorGreen = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6fb776"));
+        static readonly public SolidColorBrush ColorGray = Brushes.DimGray;
+        static readonly public SolidColorBrush ColorWhite = Brushes.White;
     }
 }

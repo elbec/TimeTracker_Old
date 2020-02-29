@@ -268,14 +268,14 @@ namespace TimeTracker
             Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
             int findIndex = _allTasks.FindIndex(x => x.id.ToString() == getId[1]);
             runningTimerId = int.Parse(getId[1]);
-            if (!findData.timerData.isTimerRunning)
+            if (!findData.timerData.IsTimerRunning)
             {
                 image.Source = ResourcePathToImageSource("stop");
                 StopTimer.Visibility = Visibility.Visible;
 
                 Recorder newTimerData = new Recorder();
                 newTimerData.StartTime = DateTime.Now;
-                newTimerData.isTimerRunning = true;
+                newTimerData.IsTimerRunning = true;
 
                 Task newData = new Task()
                 {
@@ -295,7 +295,7 @@ namespace TimeTracker
 
                 Recorder oldTimerData = findData.timerData;
                 oldTimerData.EndTime = DateTime.Now;
-                oldTimerData.isTimerRunning = false;
+                oldTimerData.IsTimerRunning = false;
 
                 Task newData = new Task()
                 {
@@ -425,13 +425,13 @@ namespace TimeTracker
         {
             Task findData = _allTasks.Find(x => x.id.ToString() == runningTimerId.ToString());
             int findIndex = _allTasks.FindIndex(x => x.id.ToString() == runningTimerId.ToString());
-            if (findData.timerData.isTimerRunning) { 
+            if (findData.timerData.IsTimerRunning) { 
                actualPlayStopImage.Source = ResourcePathToImageSource("play");
                 StopTimer.Visibility = Visibility.Hidden;
 
                 Recorder oldTimerData = findData.timerData;
                 oldTimerData.EndTime = DateTime.Now;
-                oldTimerData.isTimerRunning = false;
+                oldTimerData.IsTimerRunning = false;
 
                 Task newData = new Task()
                 {
