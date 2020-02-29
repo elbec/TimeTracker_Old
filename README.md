@@ -1,3 +1,4 @@
+[![Generic badge](https://img.shields.io/badge/TESTED-WIN10-green.svg)]()
 # TimeTracker
 
 The TimeTracker App tracks your working time. You can assign a title and subtitle to each topic. Then you can start and stop the time recorder for this topic.
