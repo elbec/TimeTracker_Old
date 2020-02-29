@@ -1,4 +1,7 @@
-[![Generic badge](https://img.shields.io/badge/TESTED-WIN10-green.svg)]()
+![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/elbec/TimeTracker?color=success)
+![GitHub issues](https://img.shields.io/github/issues-raw/elbec/TimeTracker)
+![GitHub All Releases](https://img.shields.io/github/downloads/elbec/TimeTracker/total)
+
 # TimeTracker
 
 The TimeTracker App tracks your working time. You can assign a title and subtitle to each topic. Then you can start and stop the time recorder for this topic.
