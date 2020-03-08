@@ -12,6 +12,10 @@ Tags: working time, time recorder, time tracker, time management
 
 ![appOverview](https://github.com/elbec/TimeTracker/blob/master/TimeTracker/Documentation/appOverview.png?raw=true)
 
+# Manual
+
+Since TimeTracker v1.2.1 it is possible to fold all dayPanels with <kbd>Left Ctrl</kbd> + <kbd>-</kbd>. To unfold all dayPanels press <kbd>Left Ctrl</kbd> + <kbd>+</kbd>.
+
 # Roadmap
 
 Goals through Mar 31, 2020:
