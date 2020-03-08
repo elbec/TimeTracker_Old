@@ -54,6 +54,22 @@ namespace TimeTracker
             return null;
         }
 
+        public static Image SearchVisualTreeForImage(DependencyObject targetElement, string controlName)
+        {
+            var count = VisualTreeHelper.GetChildrenCount(targetElement);
+            if (count == 0)
+                return null;
+
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(targetElement, i);
+                Image label = child as Image;
+                if (label != null && label.Name.Contains(controlName))
+                    return label;
+            }
+            return null;
+        }
+
         public static List<StackPanel> SearchVisualTreeAndReturnList(DependencyObject targetElement, string controlName)
         {
             List<StackPanel> allStackPanels = new List<StackPanel>();

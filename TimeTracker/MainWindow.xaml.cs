@@ -166,21 +166,11 @@ namespace TimeTracker
             minMaximize.Source = ResourcePathToImageSource("up");
             minMaximize.Width = 12;
             minMaximize.Height = 12;
+            minMaximize.Name = "minMaxImage";
 
             minMaximize.MouseLeftButtonDown += (s, e) =>
             {
-                StackPanel stack = Helper.SearchVisualTree(dayPanel, "Day_" + date[1]);
-
-                    if (stack.Visibility == Visibility.Visible)
-                    {
-                    minMaximize.Source = ResourcePathToImageSource("down");
-                    stack.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                    minMaximize.Source = ResourcePathToImageSource("up");
-                    stack.Visibility = Visibility.Visible;
-                    }  
+                foldOrUnfoldDayStack(detailStack, titleStack);
             };
 
             titleStack.Children.Add(label);
@@ -258,6 +248,33 @@ namespace TimeTracker
         }
 
         /// ######################ACTIONS################################################
+        
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && (Keyboard.IsKeyDown(Key.OemPlus) || Keyboard.IsKeyDown(Key.Add)))
+            {
+                findAllDayPanels(Visibility.Visible);
+
+            } else if (Keyboard.IsKeyDown(Key.LeftCtrl) && (Keyboard.IsKeyDown(Key.OemMinus) || Keyboard.IsKeyDown(Key.Subtract)))
+            {
+                findAllDayPanels(Visibility.Collapsed);
+            }
+        }
+
+        private void findAllDayPanels(Visibility state)
+        {
+            List<StackPanel> allDayPanels = Helper.SearchVisualTreeAndReturnList(mainStack, "DayPanel_");
+            if (allDayPanels != null)
+            {
+                foreach (StackPanel stack in allDayPanels)
+                {
+                    StackPanel titleStack = Helper.SearchVisualTree(stack, "stackTitle");
+                    StackPanel detailStack = Helper.SearchVisualTree(stack, "Day_");
+                    foldOrUnfoldDayStack(detailStack, titleStack, state);
+                }
+            }
+        }
+
         private void StartStopButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var image = sender as Image;
@@ -462,6 +479,35 @@ namespace TimeTracker
                 {
                     Helper.CreateCSVFromGenericList(_allTasks, sfd.FileName);
                 }
+            }
+        }
+
+        /// ######################HELPER################################################
+        
+        private void foldOrUnfoldDayStack(StackPanel detailStack, StackPanel titleStack, Visibility? newState = null)
+        {
+            Image img = Helper.SearchVisualTreeForImage(titleStack, "minMaxImage");
+            if (newState == null)
+            {
+                if (detailStack.Visibility == Visibility.Visible)
+                {
+                    img.Source = ResourcePathToImageSource("down");
+                    detailStack.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    img.Source = ResourcePathToImageSource("up");
+                    detailStack.Visibility = Visibility.Visible;
+                }
+            } else if (newState == Visibility.Collapsed)
+            {
+                img.Source = ResourcePathToImageSource("down");
+                detailStack.Visibility = Visibility.Collapsed;
+                
+            } else if (newState == Visibility.Visible)
+            {
+                img.Source = ResourcePathToImageSource("up");
+                detailStack.Visibility = Visibility.Visible;
             }
         }
     }
