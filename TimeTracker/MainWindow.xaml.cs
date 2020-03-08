@@ -20,7 +20,7 @@ namespace TimeTracker
         private Task task { get; set; }
         private bool isEditing = false;
 
-        public  Task myTask
+        public Task myTask
         {
             get
             {
