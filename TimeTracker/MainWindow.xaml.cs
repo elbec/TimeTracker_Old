@@ -20,7 +20,7 @@ namespace TimeTracker
         private Task task { get; set; }
         private bool isEditing = false;
 
-        public  Task myTask
+        public Task myTask
         {
             get
             {
@@ -47,7 +47,7 @@ namespace TimeTracker
         MyPopup codePopup;
 
         int id = 0;
-        
+
         int runningTimerId;
         Image actualPlayStopImage;
 
@@ -158,7 +158,7 @@ namespace TimeTracker
             label.Name = "titleLabel" + dayName;
 
             StackPanel detailStack = new StackPanel();
-                        detailStack.Orientation = Orientation.Vertical;
+            detailStack.Orientation = Orientation.Vertical;
             string[] date = dayName.Split('_');
             detailStack.Name = "Day_" + date[1];
 
@@ -187,6 +187,7 @@ namespace TimeTracker
             titleSubtitleTime.Name = "Issue_" + newData.id.ToString() + "_" + newData.createDate;
             titleSubtitleTime.Orientation = Orientation.Horizontal;
             titleSubtitleTime.VerticalAlignment = VerticalAlignment.Center;
+            titleSubtitleTime.Margin = new Thickness(0, 5, 0, 5);
 
             Image startStopButton = new Image();
             startStopButton.Source = ResourcePathToImageSource("play");
@@ -208,24 +209,26 @@ namespace TimeTracker
             deleteButton.Source = ResourcePathToImageSource("trash");
             deleteButton.Width = 20;
             deleteButton.Height = 20;
+            deleteButton.Margin = new Thickness(0, 0, 10, 0);
             deleteButton.MouseLeftButtonDown += DeleteButton_MouseLeftButtonDown;
 
             StackPanel titleSubtitle = new StackPanel();
             titleSubtitle.Orientation = Orientation.Vertical;
 
-            Label titleLabel = new Label();
+            TextBlock titleLabel = new TextBlock();
             titleLabel.FontSize = 15;
             titleLabel.Foreground = UXDefaults.ColorGray;
-            titleLabel.Content = newData.title;
+            titleLabel.Text = newData.title;
             titleLabel.Width = 400;
+            titleLabel.TextWrapping = TextWrapping.Wrap;
 
-            Label subtitleLabel = new Label();
+            TextBlock subtitleLabel = new TextBlock();
             subtitleLabel.FontSize = 15;
             subtitleLabel.FontWeight = FontWeights.Bold;
             subtitleLabel.Foreground = UXDefaults.ColorGray;
-
-            subtitleLabel.Content = newData.subtitle;
+            subtitleLabel.Text = newData.subtitle;
             subtitleLabel.Width = 400;
+            subtitleLabel.TextWrapping = TextWrapping.Wrap;
 
             titleSubtitle.Children.Add(titleLabel);
             titleSubtitle.Children.Add(subtitleLabel);
@@ -248,7 +251,7 @@ namespace TimeTracker
         }
 
         /// ######################ACTIONS################################################
-        
+
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && (Keyboard.IsKeyDown(Key.OemPlus) || Keyboard.IsKeyDown(Key.Add)))
@@ -392,7 +395,7 @@ namespace TimeTracker
                 e.Handled = true;
             }
         }
-        
+
         private void createNewEntry(Task newData)
         {
             if (newData.title != "Title" && newData.subtitle != "Subtitle")
@@ -437,13 +440,13 @@ namespace TimeTracker
         {
             Application.Current.Shutdown();
         }
-        
+
         private void StopTimer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Task findData = _allTasks.Find(x => x.id.ToString() == runningTimerId.ToString());
             int findIndex = _allTasks.FindIndex(x => x.id.ToString() == runningTimerId.ToString());
-            if (findData.timerData.IsTimerRunning) { 
-               actualPlayStopImage.Source = ResourcePathToImageSource("play");
+            if (findData.timerData.IsTimerRunning) {
+                actualPlayStopImage.Source = ResourcePathToImageSource("play");
                 StopTimer.Visibility = Visibility.Hidden;
 
                 Recorder oldTimerData = findData.timerData;
@@ -483,7 +486,7 @@ namespace TimeTracker
         }
 
         /// ######################HELPER################################################
-        
+
         private void foldOrUnfoldDayStack(StackPanel detailStack, StackPanel titleStack, Visibility? newState = null)
         {
             Image img = Helper.SearchVisualTreeForImage(titleStack, "minMaxImage");
@@ -503,7 +506,7 @@ namespace TimeTracker
             {
                 img.Source = ResourcePathToImageSource("down");
                 detailStack.Visibility = Visibility.Collapsed;
-                
+
             } else if (newState == Visibility.Visible)
             {
                 img.Source = ResourcePathToImageSource("up");
