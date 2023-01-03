@@ -392,6 +392,7 @@ namespace TimeTracker
             MessageBoxResult res = MessageBox.Show("Are you sure you want to Delete", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (res == MessageBoxResult.Yes)
             {
+                context.Recorders.RemoveRange(taskToDelete.Recorders);
                 context.Tasks.Remove(taskToDelete);
                 context.SaveChanges();
 
