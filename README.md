@@ -23,7 +23,7 @@ Goals through Mar 31, 2020:
 - New Feature: User can add time later e.g. can edit topic. [FINISHED]
 
 Goals through May 31, 2020:
-- New Featrue: User can add multiple time records per topic.
+- New Featrue: User can add multiple time records per topic. [FINISHED]
 - New Feature: Export data to different standard formats. [FINISHED]
 
 Goals through Dec 30, 2020:
