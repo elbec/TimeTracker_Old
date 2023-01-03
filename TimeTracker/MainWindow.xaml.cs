@@ -1,13 +1,15 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace TimeTracker
 {
@@ -16,9 +18,11 @@ namespace TimeTracker
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Task> _allTasks = new List<Task>();
+        private AppDbContext context = new AppDbContext();
+        //List<Task> _allTasks = new List<Task>();
         private Task task { get; set; }
         private bool isEditing = false;
+        Stopwatch TaskStopwatch = new Stopwatch();
 
         public Task myTask
         {
@@ -35,8 +39,6 @@ namespace TimeTracker
                     updateView();
                 } else
                 {
-                    int findIndex = _allTasks.FindIndex(x => x.id == task.id);
-                    _allTasks[findIndex] = task;
                     deleteAllObjects();
                     createAllObjects();
                 }
@@ -60,27 +62,37 @@ namespace TimeTracker
             mainStack.Orientation = Orientation.Vertical;
             StopTimer.Visibility = Visibility.Hidden;
 
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += timer_Tick;
+            timer.Start();
+
             DataGrid.Children.Add(mainStack);
 
-            _allTasks = Json.readFromJson();
             createAllObjects();
         }
 
-        private void deleteAllObjects()
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            LiveTimer.Content = TaskStopwatch.Elapsed;
+        }
+
+        public void deleteAllObjects()
         {
             mainStack.Children.Clear();
             id = 0;
         }
 
-        private void createAllObjects()
+        public void createAllObjects()
         {
-            if (_allTasks != null && _allTasks.Count > 0)
+            context = new AppDbContext();
+            if (context.Tasks.Count() > 0)
             {
-                foreach (Task item in _allTasks)
+                foreach (Task item in context.Tasks)
                 {
                     createNewEntry(item);
                 }
-                id = _allTasks.Last().id;
+                id = context.Tasks.OrderByDescending(x => x.id).FirstOrDefault().id;
             }
             updateView();
         }
@@ -128,14 +140,31 @@ namespace TimeTracker
                         if (lab1 != null)
                         {
                             var myStack = lab1.Parent as StackPanel;
+                            int findId = getIssueId(myStack);
+                            Task findData = context.Tasks.Where(x => x.id == findId).Include(rec => rec.Recorders).FirstOrDefault();
+                            TimeSpan timeSpan = TimeSpan.Zero;
+                            if (findData.Recorders != null)
+                            {
+                                List<Recorder> findRecorders = findData.Recorders.ToList();
 
-                            var findData = _allTasks.Find(x => x.id == getIssueId(myStack));
-                            lab1.Content = findData.timerData.getTotalDuration().ToString();
+                                foreach (Recorder rec in findRecorders)
+                                {
+                                    timeSpan += GetTotalDuration(rec);
+                                }
+                            }
+                            lab1.Content = timeSpan.ToString();
                         }
 
                     }
                 }
             }
+        }
+
+        public TimeSpan GetTotalDuration(Recorder recorder)
+        {
+            if(recorder == null)
+                return TimeSpan.Zero;
+            return recorder.EndTime.Subtract(recorder.StartTime).StripMilliseconds();
         }
 
         ///  ######################ADD FUNCTIONS################################################
@@ -237,7 +266,15 @@ namespace TimeTracker
             totalDuration.Name = "Duration";
             totalDuration.FontSize = 15;
             totalDuration.Foreground = UXDefaults.ColorBlue;
-            totalDuration.Content = newData.timerData.getTotalDuration();
+            TimeSpan timeSpan = TimeSpan.Zero;
+            if (newData.Recorders != null)
+            {
+                foreach (Recorder rec in newData.Recorders)
+                {
+                    timeSpan += GetTotalDuration(rec);
+                }
+            }
+            totalDuration.Content = timeSpan;
             totalDuration.Width = 90;
             totalDuration.Height = 30;
 
@@ -283,51 +320,49 @@ namespace TimeTracker
             var image = sender as Image;
             actualPlayStopImage = image;
             var stack = image.Parent as StackPanel;
-            string[] getId = stack.Name.Split('_');
+            string getId = stack.Name.Split('_')[1];
 
-            Task findData = _allTasks.Find(x => x.id.ToString() == getId[1]);
-            int findIndex = _allTasks.FindIndex(x => x.id.ToString() == getId[1]);
-            runningTimerId = int.Parse(getId[1]);
-            if (!findData.timerData.IsTimerRunning)
+
+            Task findData = context.Tasks.Where(x => x.id.ToString() == getId).Include(x => x.Recorders).FirstOrDefault();
+            Recorder currentRecorder = null;
+            if(findData.Recorders == null || findData.Recorders.Where(rec => rec.IsTimerRunning == true).Count() < 1)
+            {
+                Recorder newRecorder = new Recorder();
+                currentRecorder = newRecorder;
+                findData.Recorders.Add(newRecorder);
+            } else
+            {
+                currentRecorder = findData.Recorders.Where(rec => rec.IsTimerRunning == true).First();
+            }
+
+            runningTimerId = int.Parse(getId);
+            if (!currentRecorder.IsTimerRunning)
             {
                 image.Source = ResourcePathToImageSource("stop");
                 StopTimer.Visibility = Visibility.Visible;
+                LiveTimer.Visibility = Visibility.Visible;
+                LiveTimer.Content = TimeSpan.Zero;
+                TaskStopwatch.Restart();
 
-                Recorder newTimerData = new Recorder();
-                newTimerData.StartTime = DateTime.Now;
-                newTimerData.IsTimerRunning = true;
-
-                Task newData = new Task()
-                {
-                    id = findData.id,
-                    title = findData.title,
-                    subtitle = findData.subtitle,
-                    createDate = findData.createDate,
-                    timerData = newTimerData
-                };
-
-                _allTasks[findIndex] = newData;
+                currentRecorder.StartTime = DateTime.Now;
+                currentRecorder.IsTimerRunning = true;
+                context.SaveChanges();
             }
             else
             {
                 image.Source = ResourcePathToImageSource("play");
                 StopTimer.Visibility = Visibility.Hidden;
+                LiveTimer.Visibility = Visibility.Collapsed;
+                TaskStopwatch.Stop();
 
-                Recorder oldTimerData = findData.timerData;
-                oldTimerData.EndTime = DateTime.Now;
-                oldTimerData.IsTimerRunning = false;
+                currentRecorder.EndTime = DateTime.Now;
+                currentRecorder.IsTimerRunning = false;
 
-                Task newData = new Task()
-                {
-                    id = findData.id,
-                    title = findData.title,
-                    subtitle = findData.subtitle,
-                    createDate = findData.createDate,
-                    timerData = oldTimerData
-                };
+                if(GetTotalDuration(currentRecorder) <= new TimeSpan(0,0,5))
+                    context.Recorders.Remove(currentRecorder);
+                context.SaveChanges();
 
-                _allTasks[findIndex] = newData;
-                Json.writeToJson(_allTasks);
+                //Json.writeToJson(_allTasks);
                 updateView();
             }
         }
@@ -340,7 +375,7 @@ namespace TimeTracker
             var stack = image.Parent as StackPanel;
             string[] getId = stack.Name.Split('_');
 
-            codePopup._allTasks = _allTasks;
+            //codePopup._allTasks = context.Tasks.ToList();
             codePopup.popup.PlacementTarget = image;
             codePopup.showTimeTextBox();
             codePopup.updateView(int.Parse(getId[1]));
@@ -351,11 +386,19 @@ namespace TimeTracker
         {
             Image mySender = sender as Image;
             StackPanel parent = mySender.Parent as StackPanel;
+            int idToDelete = getIssueId(parent);
+            Task taskToDelete = context.Tasks.Where(x => x.id == idToDelete).Include(x => x.Recorders).FirstOrDefault();
 
-            _allTasks.RemoveAll(r => r.id == getIssueId(parent));
-            Json.writeToJson(_allTasks);
-            deleteAllObjects();
-            createAllObjects();
+            MessageBoxResult res = MessageBox.Show("Are you sure you want to Delete", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (res == MessageBoxResult.Yes)
+            {
+                context.Tasks.Remove(taskToDelete);
+                context.SaveChanges();
+
+                //updateView
+                deleteAllObjects();
+                createAllObjects();
+            } 
         }
 
         private int getIssueId(StackPanel stack)
@@ -376,7 +419,7 @@ namespace TimeTracker
         {
             id += 1;
             isEditing = false;
-            codePopup._allTasks = _allTasks;
+            //codePopup._allTasks = _allTasks;
             codePopup.currentID = id;
             codePopup.popup.PlacementTarget = Add;
             codePopup.hideTimeTextBox();
@@ -398,7 +441,7 @@ namespace TimeTracker
 
         private void createNewEntry(Task newData)
         {
-            if (newData.title != "Title" && newData.subtitle != "Subtitle")
+            if (newData.title != MyPopup.titleValue && newData.subtitle != MyPopup.subtitleValue)
             {
 
                 StackPanel mainStackPanel = Helper.SearchVisualTree(mainStack, "DayPanel_" + newData.createDate);
@@ -443,27 +486,18 @@ namespace TimeTracker
 
         private void StopTimer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Task findData = _allTasks.Find(x => x.id.ToString() == runningTimerId.ToString());
-            int findIndex = _allTasks.FindIndex(x => x.id.ToString() == runningTimerId.ToString());
-            if (findData.timerData.IsTimerRunning) {
+            Task findData = context.Tasks.Where(x => x.id.ToString() == runningTimerId.ToString()).FirstOrDefault();
+            //int findIndex = _allTasks.FindIndex(x => x.id.ToString() == runningTimerId.ToString());
+            Recorder currentRecorder = findData.Recorders.Where(rec => rec.IsTimerRunning).First();
+            if (currentRecorder.IsTimerRunning) {
                 actualPlayStopImage.Source = ResourcePathToImageSource("play");
                 StopTimer.Visibility = Visibility.Hidden;
+                LiveTimer.Visibility = Visibility.Hidden;
+                TaskStopwatch.Stop();
+                currentRecorder.EndTime = DateTime.Now;
+                currentRecorder.IsTimerRunning = false;
+                context.SaveChanges();
 
-                Recorder oldTimerData = findData.timerData;
-                oldTimerData.EndTime = DateTime.Now;
-                oldTimerData.IsTimerRunning = false;
-
-                Task newData = new Task()
-                {
-                    id = findData.id,
-                    title = findData.title,
-                    subtitle = findData.subtitle,
-                    createDate = findData.createDate,
-                    timerData = oldTimerData
-                };
-
-                _allTasks[findIndex] = newData;
-                Json.writeToJson(_allTasks);
                 updateView();
             }
 
@@ -480,7 +514,7 @@ namespace TimeTracker
 
                 if (sfd.ShowDialog() == true)
                 {
-                    Helper.CreateCSVFromGenericList(_allTasks, sfd.FileName);
+                    Helper.CreateCSVFromGenericList(context.Tasks.ToList(), sfd.FileName);
                 }
             }
         }

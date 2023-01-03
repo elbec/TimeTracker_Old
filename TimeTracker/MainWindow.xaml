@@ -23,6 +23,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="70"/>
@@ -35,9 +36,10 @@
                 </Image.ContextMenu>
             </Image>
             <Label Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="25" FontFamily="Arial" MouseLeftButtonDown="Window_MouseDown">Time Tracker</Label>
-            <Image Name="StopTimer" Grid.Row="0" Grid.Column="2" Source="{DynamicResource stop}" Margin="10" Height="20" Width="20" MouseLeftButtonDown="StopTimer_MouseLeftButtonDown"></Image>
-            <Image Name="Add" Grid.Row="0" Grid.Column="3" Source="{DynamicResource plus}" Margin="10" Height="20" Width="20" MouseLeftButtonDown="addNewProject_MouseLeftButtonDown" MouseEnter="OpenPopupButton_MouseEnter" MouseLeave="ClosePopupButton_MouseLeave"></Image>
-            <Image Name="Close" Grid.Row="0" Grid.Column="4" Source="{DynamicResource close}" Margin="10" Height="15" Width="15" MouseLeftButtonDown="Close_MouseLeftButtonDown"></Image>
+            <Label Name="LiveTimer" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15" FontFamily="Arial" Visibility="Collapsed">00:00:00</Label>
+            <Image Name="StopTimer" Grid.Row="0" Grid.Column="3" Source="{DynamicResource stop}" Margin="10" Height="20" Width="20" MouseLeftButtonDown="StopTimer_MouseLeftButtonDown"></Image>
+            <Image Name="Add" Grid.Row="0" Grid.Column="4" Source="{DynamicResource plus}" Margin="10" Height="20" Width="20" MouseLeftButtonDown="addNewProject_MouseLeftButtonDown" MouseEnter="OpenPopupButton_MouseEnter" MouseLeave="ClosePopupButton_MouseLeave"></Image>
+            <Image Name="Close" Grid.Row="0" Grid.Column="5" Source="{DynamicResource close}" Margin="10" Height="15" Width="15" MouseLeftButtonDown="Close_MouseLeftButtonDown"></Image>
         </Grid>
 
 
